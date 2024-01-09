@@ -8,22 +8,24 @@ const connection = mysql.createConnection({
   password : 'root',
   database : 'skcncmanagerdb'
 });
+var dbtest
 
 connection.connect();
-var dbtest
-connection.query('SELECT * from project_table', (error, rows, fields) => {
-  if (error) throw error;
-  console.log('User info is: ', rows);
-  dbtest = rows;
-  for (const key of dbtest){
-    console.log("asdfasdfasdfasdfasdf", key.seq);
-  };
-});
+
 //connection.end();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express majun', dbtest: dbtest, method: "get"});
+  connection.query('SELECT * from project_table', (error, rows, fields) => {
+    if (error) throw error;
+    console.log('User info is: ', rows);
+    dbtest = rows;
+    for (const key of dbtest){
+      console.log("asdfasdfasdfasdfasdf", key.seq);
+    };
+    res.render('index', { title: 'SK C&C MANAGER', dbtest: dbtest, method: "get"});
+  });
+  
 });
 
 router.post('/', (req, res, next) => {
@@ -52,7 +54,7 @@ router.post('/', (req, res, next) => {
   });
   //connection.release();
 
-  res.render('index', { title: 'Express majun', dbtest: dbtest, method: "post"  });
+  res.redirect(302, "/");
 });
 
 
