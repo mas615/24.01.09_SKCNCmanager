@@ -7,5 +7,74 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <p>Welcome to <%= dbtest[1].project_name %></p>
+    <p>Welcome to <%= typeof(dbtest[1]) %></p>
+    <table border="1">
+      <th>No</th>
+      <th>프로젝트코드</th>
+      <th>서비스코드</th>
+      <th>관리코드</th>
+      <th>프로젝트명</th>
+      <th>신규 점검유형</th>
+      <th>기존 점검유형</th>
+      <th>Opne일</th>
+      <th>관계사명</th>
+      <th>담당업체</th>
+      <th>담당부서</th>
+      <th>담당자</th>
+      <th>연락처</th>
+      <th>담당업체</th>
+      <th>담당부서</th>
+      <th>담당자</th>
+      <th>연락처</th>
+      <th>모의해킹</th>
+      <th>소스코드 진단</th>
+      <th>인프라 진단</th>
+      <th>비고</th>
+      <th>신규투자(회사)</th>
+      <th>사업팀요청(자체투자)</th>
+      <th>사내시스템</th>
+      <th>대외인증</th>
+      <th>그룹공통</th>
+      <th>사업팀요청(관계사)</th>
+      <th>멤버사진단</th>
+      <th>23년 관리코드</th>
+      <th>23년 이관 현황</th>
+    <% for (const project of dbtest) { %>
+      <tr>
+        <td><%= project.seq %></td>
+        <td><%= project.project_code %></td>
+        <td><%= project.service_code %></td>
+        <td><%= project.manage_code %></td>
+        <td><%= project.project_name %></td>
+        <td><%= project.new_inspectiontype %></td>
+        <td><%= project.old_inspectiontype %></td>
+        <td><%= project.open_date %></td>
+        <td><%= project.relative_comp %></td>
+        <td><%= project.comp1 %></td>
+        <td><%= project.part1 %></td>
+        <td><%= project.manager1 %></td>
+        <td><%= project.manager1_phone %></td>
+        <td><%= project.comp2 %></td>
+        <td><%= project.part2 %></td>
+        <td><%= project.manager2 %></td>
+        <td><%= project.manager2_phone %></td>
+        <td><%= project.pentest %></td>
+        <td><%= project.source_code %></td>
+        <td><%= project.infra %></td>
+        <td><%= project.note %></td>
+        <td><%= project.check1 %></td>
+        <td><%= project.check2 %></td>
+        <td><%= project.check3 %></td>
+        <td><%= project.check4 %></td>
+        <td><%= project.check5 %></td>
+        <td><%= project.check6 %></td>
+        <td><%= project.check7 %></td>
+        <td><%= project.old_manage_code %></td>
+        <td><%= project.old_project %></td>
+      </tr>
+    <% } %>
+    </table>
+    
   </body>
 </html>
