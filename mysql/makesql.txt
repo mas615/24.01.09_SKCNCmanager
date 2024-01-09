@@ -1,3 +1,7 @@
+sequelize-auto -o "./models" -d skcncmanagerdb -h 127.0.0.1 -u root -p 3306 -x root -e mysql
+sequelize-auto -o "./models" -d skcncmanagerdb -h 127.0.0.1 -u root -p 3306 -x root -e mysql
+express skcncmanager --view=ejs
+
 CREATE TABLE project_table(
     seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     project_code VARCHAR(20),
