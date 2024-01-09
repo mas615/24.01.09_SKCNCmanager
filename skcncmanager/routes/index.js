@@ -19,7 +19,7 @@ connection.query('SELECT * from project_table', (error, rows, fields) => {
     console.log("asdfasdfasdfasdfasdf", key.seq);
   };
 });
-connection.end();
+//connection.end();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
