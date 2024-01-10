@@ -7,39 +7,32 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
-    <p>what's your method?<%= method %></p>
-    <form action="/" method="post">
-      <input type="text" name="1" value="P001">
-      <input type="text" name="2" value="S001">
-      <input type="text" name="3" value="M001">
-      <input type="text" name="4" value="4">
-      <input type="text" name="5" value="5">
-      <input type="text" name="6" value="6">
-      <input type="date" name="7" value="1995-06-15">
-      <input type="hidden" name="8" value="8">
-      <input type="hidden" name="9" value="9">
-      <input type="hidden" name="10" value="1">
-      <input type="hidden" name="11" value="2">
-      <input type="hidden" name="12" value="3">
-      <input type="hidden" name="13" value="4">
-      <input type="hidden" name="14" value="5">
-      <input type="hidden" name="15" value="6">
-      <input type="hidden" name="16" value="7">
-      <input type="hidden" name="17" value="1">
-      <input type="hidden" name="18" value="1">
-      <input type="hidden" name="19" value="1">
-      <input type="hidden" name="20" value="11">
-      <input type="hidden" name="21" value="1">
-      <input type="hidden" name="22" value="1">
-      <input type="hidden" name="23" value="1">
-      <input type="hidden" name="24" value="1">
-      <input type="hidden" name="25" value="1">
-      <input type="hidden" name="26" value="1">
-      <input type="hidden" name="27" value="1">
-      <input type="hidden" name="28" value="OLD">
-      <input type="hidden" name="29" value="1">
-      <input type="submit">
-    </form>
+    <p>what's your method? : <%= method %></p>
+    <script>
+      function updateInputValue() {
+        // 선택된 옵션의 값 가져오기
+        var selectedOption = document.getElementById("selectOption");
+        var selectedValue = selectedOption.options[selectedOption.selectedIndex].value;
+  
+        // Input 요소의 값을 선택된 값으로 변경
+        var inputValueElement = document.getElementById("inputValue");
+        inputValueElement.value = selectedValue;
+        if (selectedValue === "A") {
+          inputValueElement.value = "<%= 'A'+codefamily[2] %>";
+        } else if (selectedValue === "B") {
+          inputValueElement.value = "<%= 'B'+codefamily[3] %>";
+        } else if (selectedValue === "C") {
+          inputValueElement.value = "<%= 'C'+codefamily[4] %>";
+        }else if (selectedValue === "D") {
+          inputValueElement.value = "<%= 'D'+codefamily[5] %>";
+        }else if (selectedValue === "E") {
+          inputValueElement.value = "<%= 'E'+codefamily[6] %>";
+        }else if (selectedValue === "F") {
+          inputValueElement.value = "<%= 'F'+codefamily[7] %>";
+        }
+      }
+    </script>
+        
     <table border="1">
       <th>No</th>
       <th>1.<br>프로젝트코드</th>
@@ -72,36 +65,56 @@
       <th>28.<br>23년 관리코드</th>
       <th>29.<br>23년 이관 현황</th>
       <tr>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
-          <td><input type="text"></td>
+        <form action="/" method="post">
+          <td><input type="submit"></td>
+          <td><input type="text" name="1" value="<%= 'P'+codefamily[0] %>"></td>
+          <td><input type="text" name="2" value="<%= 'S'+codefamily[1] %>"></td>
+          <td><input type="text" name="3" id="inputValue" value="<%= 'A'+codefamily[2] %>"></td>
+          <td><input type="text" name="4" value="프로젝트명을 입력하세요"></td>
+          <td>
+            <select name="5" id="selectOption" onchange="updateInputValue()">
+              <option value="A">A.신규Biz</option>
+              <option value="B">B.그룹공통</option>
+              <option value="C">C.대외인증</option>
+              <option value="D">D.사내시스템</option>
+              <option value="E">E.신규Biz정기</option>
+              <option value="F">F.기타</option>
+            </select>
+          </td>
+          <td>
+            <select name="6">
+              <option value="A">A.신규Biz</option>
+              <option value="B">B.그룹공통</option>
+              <option value="C">C.대외인증</option>
+              <option value="D">D.사내시스템</option>
+              <option value="E">E.신규Biz정기</option>
+              <option value="F">F.기타</option>
+            </select>
+          </td>
+          <td><input type="date" name="7" value="1995-06-15"></td>
+          <td><input type="text" name="8" placeholder="관계사 명" required></td>
+          <td><input type="text" name="9" placeholder="담당업체" required></td>
+          <td><input type="text" name="10" placeholder="담당부서" required></td>
+          <td><input type="text" name="11" placeholder="담당자" required></td>
+          <td><input type="text" name="12" placeholder="연락처" required></td>
+          <td><input type="text" name="13" placeholder="담당업체" required></td>
+          <td><input type="text" name="14" placeholder="담당부서" required></td>
+          <td><input type="text" name="15" placeholder="담당자" required></td>
+          <td><input type="text" name="16" placeholder="연락처" required></td>
+          <td><input type="text" name="17" value="1"></td>
+          <td><input type="text" name="18" value="1"></td>
+          <td><input type="text" name="19" value="1"></td>
+          <td><input type="text" name="20" placeholder="비고"></td>
+          <td><input type="radio" name="21" value="1">O<input type="radio" name="21" value="0">X</td>
+          <td><input type="text" name="22" value="1"></td>
+          <td><input type="text" name="23" value="1"></td>
+          <td><input type="text" name="24" value="1"></td>
+          <td><input type="text" name="25" value="1"></td>
+          <td><input type="text" name="26" value="1"></td>
+          <td><input type="text" name="27" value="1"></td>
+          <td><input type="text" name="28" value="OLD"></td>
+          <td><input type="text" name="29" value="1"></td>
+        </form>
       </tr>
     <% for (const project of dbtest) { %>
       <tr>

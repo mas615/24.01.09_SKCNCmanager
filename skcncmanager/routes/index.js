@@ -16,16 +16,22 @@ connection.connect();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  connection.query('SELECT * from project_table', (error, rows, fields) => {
+  connection.query('SELECT * from project_table ORDER BY 1 DESC', (error, rows, fields) => {
     if (error) throw error;
-    console.log('User info is: ', rows);
-    dbtest = rows;
-    for (const key of dbtest){
-      console.log("asdfasdfasdfasdfasdf", key.seq);
-    };
-    res.render('index', { title: 'SK C&C MANAGER', dbtest: dbtest, method: "get"});
-  });
-  
+    connection.query(`(SELECT project_code FROM project_table order by 1 desc LIMIT 1) union (select service_code from project_table order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='A' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='B' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='C' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='D' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='E' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='F' order by 1 desc LIMIT 1)`, (error, serviceCodes, fields) => {
+      if (error) throw error;
+      console.log(serviceCodes)
+        var codefamily = []
+        for( const key of serviceCodes){
+          serviceCodes = key.project_code;
+          var currentNumber = parseInt(serviceCodes.substr(1), 10); // 'S006'에서 006을 추출하고 정수로 변환
+          var newNumber = currentNumber + 1;
+          var newCode = ('000' + newNumber).slice(-3); // 숫자를 다시 문자열로 변환하고 'S'를 추가
+          codefamily.push(newCode)
+        }
+      res.render('index', { title: 'SK C&C MANAGER', dbtest: rows, method: "get", codefamily: codefamily });
+    }); 
+  });    
 });
 
 router.post('/', (req, res, next) => {
