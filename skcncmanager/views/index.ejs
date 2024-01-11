@@ -3,8 +3,10 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    
   </head>
   <body>
+    <a href="/m/insert">프로젝트 관리대장</a><br><a href="/m/penetrationtest">모의해킹 종합</a><br>
     <h1><%= title %></h1>
     <script>
       function updateInputValue() {
@@ -31,7 +33,7 @@
       }
     </script>
     <tr>
-        <form action="/" method="post">
+        <form action="/m/insert" method="post">
         <table border="1">
           <tr>
             <td>프로젝트코드</td>

@@ -34,3 +34,98 @@ CREATE TABLE project_table(
     old_manage_code VARCHAR(20),
     old_project BOOL
 );
+
+INSERT INTO project_table (
+    project_code, 
+    service_code, 
+    manage_code, 
+    project_name, 
+    new_inspectiontype, 
+    old_inspectiontype, 
+    open_date, 
+    relative_comp, 
+    comp1, 
+    part1, 
+    manager1, 
+    manager1_phone, 
+    comp2, 
+    part2, 
+    manager2, 
+    manager2_phone, 
+    pentest, 
+    source_code, 
+    infra, 
+    note, 
+    check1, 
+    check2, 
+    check3, 
+    check4, 
+    check5, 
+    check6, 
+    check7, 
+    old_manage_code, 
+    old_project
+) VALUES (
+    'P003',
+    'S003',
+    'M003',
+    'Project C',
+    'New',
+    'Old',
+    '2024-01-11',
+    'RelCompC',
+    'CompC1',
+    'PartC1',
+    'ManagerC1',
+    '777-888-9999',
+    'CompC2',
+    'PartC2',
+    'ManagerC2',
+    '000-111-2222',
+    true,
+    false,
+    true,
+    'Third note',
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    'OldM003',
+    false
+);
+
+(SELECT project_code FROM project_table order by 1 desc LIMIT 1) union (select service_code from project_table order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='A' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='B' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='C' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='D' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='E' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='F' order by 1 desc LIMIT 1)
+
+CREATE TABLE penetrationtest(
+    seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    manage_code VARCHAR(20),
+    status VARCHAR(20),
+    url VARCHAR(255),
+    urlcount int(10),
+    pentester VARCHAR(20),
+    testcount int(10),
+    manday int(10),
+    startdate DATE,
+    enddate DATE,
+    actdate DATE,
+    memo VARCHAR(255)
+);
+
+INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, startdate, enddate, actdate, memo)
+VALUES
+('A001', 'In Progress', 'http://example.com', 5, 'John Doe', 3, '2024-01-11', '2024-01-20', '2024-01-15', 'Initial testing'),
+('A002', 'Completed', 'http://testsite.com', 8, 'Jane Smith', 4, '2024-02-01', '2024-02-10', '2024-02-05', 'Final report submitted'),
+('A003', 'Scheduled', 'http://newsite.org', 10, 'Bob Johnson', 2, '2024-03-05', '2024-03-15', NULL, 'Waiting for approval');
+
+select * from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code;
+
+INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, startdate, enddate, actdate, memo)
+VALUES
+('B001', 'In Progress', 'http://example.com', 5, 'John Doe', 3, '2024-01-11', '2024-01-20', '2024-01-15', 'Initial testing'),
+('B002', 'Completed', 'http://testsite.com', 8, 'Jane Smith', 4, '2024-02-01', '2024-02-10', '2024-02-05', 'Final report submitted'),
+('B003', 'Scheduled', 'http://newsite.org', 10, 'Bob Johnson', 2, '2024-03-05', '2024-03-15', NULL, 'Waiting for approval');
+
+select project_name, old_inspectiontype, penetrationtest.manage_code, url, urlcount, pentester, testcount, startdate, enddate, actdate, memo from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code;

@@ -5,7 +5,8 @@ const m = require('./m/m');
 router.use("/m",m);
 
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  body = `<h>SK C&C MANAGER</h>`
+  res.render('tmp', { title: 'SK C&C MANAGER', head: "", body: body });
 });
 
 module.exports = router;

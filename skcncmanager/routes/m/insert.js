@@ -53,7 +53,7 @@ router.post('/', (req, res, next) => {
     }
   });
   //302
-  res.redirect(302, "/");
+  res.redirect(302, "/m/insert");
 });
 
 module.exports = router;
