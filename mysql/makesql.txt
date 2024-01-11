@@ -129,3 +129,39 @@ VALUES
 ('B003', 'Scheduled', 'http://newsite.org', 10, 'Bob Johnson', 2, '2024-03-05', '2024-03-15', NULL, 'Waiting for approval');
 
 select project_name, old_inspectiontype, penetrationtest.manage_code, url, urlcount, pentester, testcount, startdate, enddate, actdate, memo from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code;
+
+SELECT * FROM penetrationtest t1 WHERE testcount = (SELECT MAX(testcount) FROM penetrationtest t2 WHERE t1.manage_code = t2.manage_code);
+
+// 중복 제거된 쿼리문
+SELECT 
+    project_name, 
+    old_inspectiontype, 
+    penetrationtest.manage_code, 
+    status, 
+    url, 
+    urlcount, 
+    pentester, 
+    testcount, 
+    manday, 
+    DATE_FORMAT(startdate, "%y-%m-%d"), 
+    DATE_FORMAT(enddate, "%y-%m-%d"), 
+    DATE_FORMAT(actdate, "%y-%m-%d"), 
+    memo 
+FROM 
+    penetrationtest 
+INNER JOIN 
+    project_table 
+ON 
+    penetrationtest.manage_code = project_table.manage_code 
+WHERE 
+    (penetrationtest.manage_code, testcount) IN (
+        SELECT 
+            manage_code, 
+            MAX(testcount) AS max_testcount 
+        FROM 
+            penetrationtest 
+        GROUP BY 
+            manage_code
+    ) 
+ORDER BY 
+    penetrationtest.seq DESC;

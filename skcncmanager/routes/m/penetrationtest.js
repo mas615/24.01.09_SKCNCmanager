@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql2');
+//라우팅
+const detail = require('./penetrationtest/detail.js');
+
+router.use("/detail", detail);
 
 router.get('/', function(req, res, next) {
     var title = "모의해킹종합"
@@ -14,13 +18,12 @@ router.get('/', function(req, res, next) {
       });      
     connection.connect();
     connection.query('select manage_code, project_name from project_table order by manage_code', (error, projectcode, fields) => {
-        console.log(projectcode);
         var select 
         for(const projectcodekey of projectcode){
-            console.log(projectcodekey.manage_code);
             select += `<option value="${projectcodekey.manage_code}">[${projectcodekey.manage_code}] : ${projectcodekey.project_name}</option>`
         };
-    connection.query('select project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate,"%y-%m-%d"), DATE_FORMAT(enddate,"%y-%m-%d"), DATE_FORMAT(actdate,"%y-%m-%d"), memo from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code order by penetrationtest.seq desc', (error, rows, fields) => {
+    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.seq DESC;`;
+    connection.query(sql, (error, rows, fields) => {
         var body = `
         <form action="/m/penetrationtest" method="post">
         <table border='1'>
@@ -72,9 +75,7 @@ router.get('/', function(req, res, next) {
         `;
         for(const key of rows){
             body += "<tr>";
-            console.log(key.project_code);
                 for(const key2 in key){
-                    //console.log(key[key2]);
                     if (key2 == "status"){
                       if (key[key2] == '1'){
                         body += "<td>1. 최초진단</td>";
@@ -85,8 +86,9 @@ router.get('/', function(req, res, next) {
                       }else{
                         body += "<td>코드오류</td>";
                       };
+                    }else if(key2 == "manage_code"){
+                      body += `<td><a href="./penetrationtest/detail?code=${key[key2]}">${key[key2]}</a></td>`;
                     }else{
-                      console.log(key2);
                       body += "<td>"+key[key2]+"</td>";
                     }
                 }
