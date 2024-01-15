@@ -3,12 +3,16 @@ var router = express.Router();
 const mysql = require('mysql2');
 //라우팅
 const detail = require('./penetrationtest/detail.js');
+const pushvulner = require('./penetrationtest/pushvulner.js');
+const pushdetail = require('./penetrationtest/pushdetail.js');
 
 router.use("/detail", detail);
+router.use("/pushvulner", pushvulner);
+router.use("/pushdetail", pushdetail);
 
 router.get('/', function(req, res, next) {
     var title = "모의해킹종합"
-    var head = "헤드"
+    var head = "";
     var body = "바디"
     const connection = mysql.createConnection({
         host     : 'localhost',
@@ -36,8 +40,6 @@ router.get('/', function(req, res, next) {
         <tr><td>진행상태</td><td>
         <select name='2'>
           <option value='1'>1. 최초진단</option>
-          <option value='2'>2. 이행점검</option>
-          <option value='3'>3. 조치완료</option>
         </select>
         </td></tr>
         <tr><td>URL</td><td>
@@ -56,13 +58,13 @@ router.get('/', function(req, res, next) {
         <input type='number' name='7'>
         </td></tr>
         <tr><td>진단시작일</td><td>
-        <input type='date' name='8' value="1995-06-15">
+        <input type='date' name='8' id='now_date1'>
         </td></tr>
         <tr><td>진단종료일</td><td>
-        <input type='date' name='9' value="1995-06-15">
+        <input type='date' name='9' id='now_date2'>
         </td></tr>
         <tr><td>조치예정일</td><td>
-        <input type='date' name='10' value="1995-06-15">
+        <input type='date' name='10' id='now_date3'>
         </td></tr>
         <tr><td>비고</td><td>
         <input type='text' name='11'>
@@ -94,10 +96,10 @@ router.get('/', function(req, res, next) {
                 }
             body += "</tr>";
         }
-        body += "</table>";
+        body += "</table><script>document.getElementById('now_date1').valueAsDate = new Date();document.getElementById('now_date2').valueAsDate = new Date();document.getElementById('now_date3').valueAsDate = new Date();</script>";
 
 
-        res.render('tmp', { title : title, head : "", body : body});
+        res.render('tmp', { title : title, head : head, body : body});
         connection.end();
     });
     });

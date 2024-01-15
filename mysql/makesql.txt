@@ -165,3 +165,16 @@ WHERE
     ) 
 ORDER BY 
     penetrationtest.seq DESC;
+
+//모의해킹_최초점검
+CREATE TABLE penetrationtest_vulner(
+    seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    manage_code VARCHAR(20),
+    vulner VARCHAR(255),
+    memo VARCHAR(255),
+    vulnerspot VARCHAR(255),
+    status int(10),
+    vulnermanager VARCHAR(255),
+    vulnernote VARCHAR(255),
+    vulnermemo VARCHAR(255)
+);

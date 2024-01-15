@@ -79,7 +79,7 @@
           </tr>
           <tr>
             <td>Open일</td>
-            <td><input type="date" name="7" value="1995-06-15"></td>
+            <td><input type="date" name="7" id="now_date"></td>
           </tr>
           <tr>
             <td>관계사 명</td>
@@ -230,6 +230,6 @@
       return `${yy}.${mm}.${dd}(${dayOfWeek})`;
     } %>
     </table>
-    
+    <script>document.getElementById('now_date').valueAsDate = new Date();</script>
   </body>
 </html>
