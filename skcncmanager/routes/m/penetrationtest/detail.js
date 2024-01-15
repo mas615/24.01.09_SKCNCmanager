@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
     
     connection.query(sql, values, (error, rows, fields) => {
       console.log(new Date());
-        var body = `<br><table border='1'><th bgcolor="#D9E5FF">점검회차</th><th bgcolor="#D9E5FF">진행상태</th><th bgcolor="#D9E5FF">URL or IP</th><th bgcolor="#D9E5FF">URL 수</th><th bgcolor="#D9E5FF">진단자</th><th bgcolor="#D9E5FF">진단공수</th><th bgcolor="#D9E5FF">진단 시작일</th><th bgcolor="#D9E5FF">진단 종료일</th><th bgcolor="#D9E5FF">조치 예정일</th><th bgcolor="#D9E5FF">비고</th>
+        var body = `<br><a href="./pushdetail?code=${req.query.code}">★★이행차수 추가★★</a><br><table border='1'><th bgcolor="#D9E5FF">점검회차</th><th bgcolor="#D9E5FF">진행상태</th><th bgcolor="#D9E5FF">URL or IP</th><th bgcolor="#D9E5FF">URL 수</th><th bgcolor="#D9E5FF">진단자</th><th bgcolor="#D9E5FF">진단공수</th><th bgcolor="#D9E5FF">진단 시작일</th><th bgcolor="#D9E5FF">진단 종료일</th><th bgcolor="#D9E5FF">조치 예정일</th><th bgcolor="#D9E5FF">비고</th>
         `;
         for(const key of rows){
             body += "<tr>";
@@ -41,7 +41,7 @@ router.get('/', function(req, res, next) {
                 }
             body += "</tr>";
         }
-        body += "</table>";
+        body += `</table>`;
 
 
         res.render('tmp', { title : title, head : "", body : body});

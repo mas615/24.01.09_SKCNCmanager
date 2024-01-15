@@ -96,7 +96,7 @@ router.get('/', function(req, res, next) {
                 }
             body += "</tr>";
         }
-        body += "</table><script>document.getElementById('now_date1').valueAsDate = new Date();document.getElementById('now_date2').valueAsDate = new Date();document.getElementById('now_date3').valueAsDate = new Date();</script>";
+        body += "</table><script>document.getElementById('now_date1').valueAsDate = new Date();document.getElementById('now_date2').valueAsDate = new Date();</script>";
 
 
         res.render('tmp', { title : title, head : head, body : body});
@@ -116,14 +116,14 @@ router.post('/', (req, res, next) => {
     connection.connect();
     var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     var values = []
+    console.log(values);
     //받은 파라미터를 values에 추가
     for (const key in req.body){
+      if(req.body[key]==''){
+        values.push(null);
+      }else{
         values.push(req.body[key]);
-    //   if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
-    //     values.push(Boolean(req.body[key]))
-    //   } else {
-    //     values.push(String(req.body[key]))
-    //   };
+      };        
     };
     //쿼리 실행
     connection.query(sql,values,function(err, rows, fields) {
