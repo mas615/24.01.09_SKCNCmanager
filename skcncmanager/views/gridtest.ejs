@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handsontable Express App</title>
+  <!-- Handsontable의 CSS 파일을 로드합니다. -->
+  <link href="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.css" rel="stylesheet">
+</head>
+<body>
+  <!-- 테이블이 표시될 컨테이너 엘리먼트를 생성합니다. -->
+  <div id="example"></div>
+
+  <!-- Handsontable의 JavaScript 파일을 로드합니다. -->
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.js"></script>
+
+  <script>
+    // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
+    const data = <%- JSON.stringify(data) %>;
+
+    // Handsontable을 초기화하고 옵션을 설정합니다.
+    const container = document.getElementById('example');
+    const hot = new Handsontable(container, {
+      data: data,
+      colHeaders: true,
+      rowHeaders: true,
+      licenseKey: 'non-commercial-and-evaluation',
+      cells: function (row, col, prop) {
+        const cellProperties = {};
+
+        // 맨 첫 번째 행의 배경색을 설정
+        if (row === 0) {
+        cellProperties.renderer = function (instance, td, row, col, prop, value, cellProperties) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+            td.style.background = 'lightblue'; // 배경색을 여기서 설정
+        };
+        }
+
+        return cellProperties;
+    }
+      
+    });
+  </script>
+</body>
+</html>
