@@ -12,7 +12,6 @@ connection.connect();
 //db연결 끝 connection.connect(); 로 연결
 
 router.get('/', function(req, res, next) {
-    console.log("파라미터값 : ",req.query.code);
     var title = "타이틀"
     var head = "헤드"
     var body = ""
@@ -34,9 +33,8 @@ router.get('/', function(req, res, next) {
         };
         body += `<tr><form action="./pushdetail" method='post'><input type='hidden' name='code' value='${req.query.code}'>`;
         var name = 0;
-        var now_date = `<script>`;
+        var now_date = ``;
         for(const rowskey in rows[0]){
-            console.log(rowskey);
             if(rowskey == "testcount"){
                 body += `<td bgcolor="#D9E5FF">${rows[0][rowskey]+1}</td><input type="hidden" name="${name}" value="${rows[0][rowskey]+1}">`;
                 name += 1;
@@ -62,23 +60,82 @@ router.get('/', function(req, res, next) {
             }; 
             
         };
-        body += `<td><input type='submit'></form></td></tr></table>${now_date}</script>`;
-        res.render('tmp', { title : title, head : head, body : body});
+        console.log(rows[0].testcount);
+        body += `<td><input type='submit'></td></tr></table>`;
+        sql2 = `select vulner, memo, vulnerspot, DATE_FORMAT(lastdate, "%y-%m-%d"), status, vulnermanager, vulnernote, vulnermemo from penetrationtest_vulner where manage_code=? and testcount=? order by seq`;
+        values2 = [req.query.code,rows[0].testcount];
+        connection.query(sql2, values2, (error, rows2, fields) => {
+          body +=`<br><table border='1'>`;
+          rows2table = ['취약점','내용','발생위치','최종점검일','조치상태'];
+          for(const rows2tablekey of rows2table){
+            body += `<th>${rows2tablekey}</th>`;
+          };
+          rows2table = ['담당자','조치내용','비고'];
+          for(const rows2tablekey of rows2table){
+            body += `<th bgcolor="#D9E5FF">${rows2tablekey}</th>`;
+          };
+          rownum = 0;
+          for(const rows2key of rows2){
+            body += `<tr>`;
+            name = 0;
+            for(const rows2keykey in rows2key){
+              if(rows2keykey == 'DATE_FORMAT(lastdate, "%y-%m-%d")'){
+                body += `<td><input type='date' name='${rownum}.${name}' id='${rownum}.${name}'></td>`;
+                now_date +=`document.getElementById('${rownum}.${name}').valueAsDate = new Date();`;
+                name += 1;
+              }else if(rows2keykey == 'status'){
+                console.log(rows2key[rows2keykey]);
+                if(rows2key[rows2keykey] == '조치완료'){
+                  body += `<td>${rows2key[rows2keykey]}<input type='hidden' name='${rownum}.${name}' value='${rows2key[rows2keykey]}'></td>`;
+                }else{
+                  body += `<td><select name='${rownum}.${name}'><option value='미조치'>미조치</option><option value='조치완료'>조치완료</option></select></td>`;
+                };
+                name += 1;
+              }else{
+                body += `<td>${rows2key[rows2keykey]}<input type='hidden' name='${rownum}.${name}' value='${rows2key[rows2keykey]}'></td>`;
+                name += 1;
+              };              
+            };
+            body += `</tr>`;
+            rownum += 1;
+          }
+          body += `</table></form><script>${now_date}</script>`;
+          res.render('tmp', { title : title, head : head, body : body});
+        });       
     });    
 });
 
 router.post('/', (req, res, next) => {  
     //connection.connect();
     var sql = "INSERT INTO penetrationtest (testcount, url, urlcount, pentester, status, manday, startdate, enddate, actdate, memo, manage_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    var values = []
-    console.log(req.body);
+    var sql2 = `INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES ('${req.body.code}',${req.body[0]},?,?,?,?,?,?,?,?)`;
+    var values = [];
+    var vulnvalues =[];
     //받은 파라미터를 values에 추가
+    var reqbodynum = 0;
+    var vulnvaluesnum = 0;
     for (const key in req.body){
-      if(req.body[key]==''){
-        values.push(null);
+      if(reqbodynum < 11){
+        if(req.body[key]==''){
+          values.push(null);
+          reqbodynum++;
+        }else{
+          values.push(req.body[key]);
+          reqbodynum++;
+        };
       }else{
-        values.push(req.body[key]);
-      };        
+        if(vulnvaluesnum == 8){
+          sql2 += `,('${req.body.code}',${req.body[0]},?,?,?,?,?,?,?,?)`;
+          vulnvaluesnum = 0;
+        }
+        if(req.body[key]==''){
+          vulnvalues.push(null);
+          vulnvaluesnum++;
+        }else{
+          vulnvalues.push(req.body[key]);
+          vulnvaluesnum++;
+        };
+      };  
     };
     //쿼리 실행
     connection.query(sql,values,function(err, rows, fields) {
@@ -89,8 +146,16 @@ router.post('/', (req, res, next) => {
         console.log(rows.insertId);
       }
     });
+    connection.query(sql2,vulnvalues,function(err, rows, fields) {
+      if (err){
+        console.log(err);
+      }
+      else{
+        console.log(rows.insertId);
+      }
+    });
     302
-    res.redirect(302, `/m/penetrationtest/detail?code=${req.body.code}`);
+    res.redirect(302, `/m/penetrationtest/detail?code=${req.body.code}&testcount=${req.body[0]}`);
     //connection.end();
   });
 

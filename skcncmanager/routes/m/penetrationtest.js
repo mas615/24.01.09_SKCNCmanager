@@ -5,10 +5,12 @@ const mysql = require('mysql2');
 const detail = require('./penetrationtest/detail.js');
 const pushvulner = require('./penetrationtest/pushvulner.js');
 const pushdetail = require('./penetrationtest/pushdetail.js');
+const pentestcount = require('./penetrationtest/pentestcount.js');
 
 router.use("/detail", detail);
 router.use("/pushvulner", pushvulner);
 router.use("/pushdetail", pushdetail);
+router.use("/pentestcount", pentestcount);
 
 router.get('/', function(req, res, next) {
     var title = "모의해킹종합"
@@ -21,12 +23,12 @@ router.get('/', function(req, res, next) {
         database : 'skcncmanagerdb'
       });      
     connection.connect();
-    connection.query('select manage_code, project_name from project_table order by manage_code', (error, projectcode, fields) => {
+    connection.query('select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) order by manage_code', (error, projectcode, fields) => {
         var select 
         for(const projectcodekey of projectcode){
             select += `<option value="${projectcodekey.manage_code}">[${projectcodekey.manage_code}] : ${projectcodekey.project_name}</option>`
         };
-    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.seq DESC;`;
+    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
     connection.query(sql, (error, rows, fields) => {
         var body = `
         <form action="/m/penetrationtest" method="post">
@@ -43,7 +45,7 @@ router.get('/', function(req, res, next) {
         </select>
         </td></tr>
         <tr><td>URL</td><td>
-        <input type='text' name='3'>
+        <textarea name='3'></textarea>
         </td></tr>
         <tr><td>URL수</td><td>
         <input type='number' name='4'>
@@ -51,8 +53,8 @@ router.get('/', function(req, res, next) {
         <tr><td>진단자</td><td>
         <input type='text' name='5'>
         </td></tr>
-        <tr><td>점검회차</td><td>
-        <input type='number' name='6'>
+        <tr><td>점검회차</td><td>0
+        <input type='hidden' name='6' value='0'>
         </td></tr>
         <tr><td>진단공수</td><td>
         <input type='number' name='7'>
@@ -89,7 +91,9 @@ router.get('/', function(req, res, next) {
                         body += "<td>코드오류</td>";
                       };
                     }else if(key2 == "manage_code"){
-                      body += `<td><a href="./penetrationtest/detail?code=${key[key2]}">${key[key2]}</a></td>`;
+                      body += `<td><a href="./penetrationtest/detail?code=${key[key2]}&testcount=0">${key[key2]}</a></td>`;
+                    }else if(key2 == "url"){
+                      body += "<td><pre>"+key[key2]+"</pre></td>";
                     }else{
                       body += "<td>"+key[key2]+"</td>";
                     }
@@ -100,7 +104,7 @@ router.get('/', function(req, res, next) {
 
 
         res.render('tmp', { title : title, head : head, body : body});
-        connection.end();
+        //connection.end();
     });
     });
     
@@ -136,7 +140,7 @@ router.post('/', (req, res, next) => {
     });
     //302
     res.redirect(302, "/m/penetrationtest");
-    connection.end();
+    //connection.end();
   });
 
 module.exports = router;

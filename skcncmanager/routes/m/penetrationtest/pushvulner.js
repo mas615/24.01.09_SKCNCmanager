@@ -7,20 +7,50 @@ const connection = mysql.createConnection({
     user     : 'root',
     password : 'root',
     database : 'skcncmanagerdb'
-  });     
+  });
+connection.connect();
 
-router.get('/', function(req, res, next) {
-    console.log(req.query);
-    connection.connect();
-    connection.query('select * from penetrationtest where manage_code = "A000" order by testcount desc limit 1', (error, projectcode, fields) => {
-    //console.log(projectcode[0]);
-    body = `<table border='1'><th>취약점 No</th><th>취약점</th><th>내용</th><th>발생위치</th><th>최종점검일</th><th>점검회차</th><th>조치상태</th><th>조치담당자</th><th>조치내용</th><th>비고</th><tr>`;
-    body += `<td><input></td>`;
-    body += `</tr></table>`;
-    body += ``;
-    res.render('tmp', { title : "title", head : "head", body : body});
-    });
-    
+router.post('/', function(req, res, next) { 
+    body='';    
+    sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+    sql2 = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+    values = [];
+    for(const bodykey in req.body){
+      values.push(req.body[bodykey]);
+    }
+    console.log('testcount : ',req.body[2]);
+    if(req.body[2] !== '0'){
+      console.log('if로 갔을경우.');
+      connection.query(sql,values, (err, rows, fields) => {
+        if (err){
+          console.log(err);
+        }
+        else{
+          console.log(rows.insertId);
+        };
+        values[1] = 0; 
+        connection.query(sql2,values, (err, rows, fields) => {
+          if (err){
+            console.log(err);
+          }
+          else{
+            console.log(rows.insertId);
+          }
+          res.redirect(302, `/m/penetrationtest/detail?code=${req.body[1]}&testcount=${req.body[2]}`);
+        });
+      });
+    }else{
+      console.log('else로 갔을경우.');
+      connection.query(sql,values, (err, rows, fields) => {
+        if (err){
+          console.log(err);
+        }
+        else{
+          console.log(rows.insertId);
+        }
+        res.redirect(302, `/m/penetrationtest/detail?code=${req.body[1]}&testcount=${req.body[2]}`);
+      });      
+    };    
 });
 
 module.exports = router;
