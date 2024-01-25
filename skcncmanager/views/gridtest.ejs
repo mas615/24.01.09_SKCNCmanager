@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Handsontable Express App</title>
   <!-- Handsontable의 CSS 파일을 로드합니다. -->
-  <link href="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.css" rel="stylesheet">
+  <link href="/handsontable/handsontable.full.css" rel="stylesheet">
 </head>
 <body>
   <!-- 테이블이 표시될 컨테이너 엘리먼트를 생성합니다. -->
   <div id="example"></div>
 
   <!-- Handsontable의 JavaScript 파일을 로드합니다. -->
-  <script src="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.js"></script>
+  <script src="/handsontable/handsontable.full.js"></script>
 
   <script>
     // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
@@ -25,6 +25,25 @@
       colHeaders: true,
       rowHeaders: true,
       licenseKey: 'non-commercial-and-evaluation',
+      afterChange: (changes, source) => {
+        if (source === 'edit') {
+          // 사용자가 수정한 데이터를 서버로 전송
+          fetch('/m/penetrationtest/gridtest', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ changes }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error updating data:', error);
+          });
+        }
+      },
       cells: function (row, col, prop) {
         const cellProperties = {};
 
