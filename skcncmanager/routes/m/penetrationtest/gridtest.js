@@ -33,7 +33,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  console.log(req.body);
+  console.log(req.body.rowData);
+  for(const key in req.body.rowData){
+    console.log(key);
+  }
 });
 
 module.exports = router;
