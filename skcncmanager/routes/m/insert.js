@@ -16,7 +16,7 @@ connection.connect();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;
-  connection.query('SELECT seq, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table ORDER BY 1 DESC', (error, rows, fields) => {
+  connection.query(`SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, if(pentest=1, "true", "false"), if(source_code=1, "true", "false"), if(infra=1, "true", "false"), note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table where del="false" ORDER BY 1 DESC`, (error, rows, fields) => {
     if (error) throw error;
     connection.query(`(SELECT project_code FROM project_table order by 1 desc LIMIT 1) union (select service_code from project_table order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='A' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='B' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='C' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='D' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='E' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='F' order by 1 desc LIMIT 1)`, (error, serviceCodes, fields) => {
       if (error) throw error;
@@ -30,7 +30,7 @@ router.get('/', function(req, res, next) {
         };
         const data = [];
         for(const rowskey of rows){
-          const datadata = ['false'];
+          const datadata = [];
           for(const rowskeykey in rowskey){            
             datadata.push(rowskey[rowskeykey]);
           };
@@ -41,10 +41,6 @@ router.get('/', function(req, res, next) {
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
           const data = ${JSON.stringify(data)};
-          let edited = {};
-          let edited2 = {};
-          let editlog = [];
-          let editlog2 = [];
           let changedkey = new Set();
           let postvalue = [];
       
@@ -52,7 +48,7 @@ router.get('/', function(req, res, next) {
           const container = document.getElementById('example');
           const hot = new Handsontable(container, {
               data: data,
-              colHeaders: ['삭제','프라이머리키','프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
+              colHeaders: ['프라이머리키', '삭제', '프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
               rowHeaders: true,
               licenseKey: 'non-commercial-and-evaluation',
               fillHandle: false,
@@ -60,7 +56,11 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              columns: [{type: "checkbox",className: "htCenter"},{ readOnly: true },{},{},{},{},{},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}
+              hiddenColumns: {
+                columns: [0], // 숨길 열의 인덱스를 지정
+                //indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
+              },
+              columns: [{ readOnly: true },{type: "checkbox"},{},{},{},{},{},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{},{},{},{},{},{},{},{},{},{},{}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;
@@ -84,7 +84,7 @@ router.get('/', function(req, res, next) {
               },
           });
 
-          //필터링 해제함수
+          //필터링 해제 및 저장함수
           function clearFilters() {
             hot.getPlugin('filters').clearConditions();
             hot.getPlugin('filters').filter()
@@ -101,7 +101,6 @@ router.get('/', function(req, res, next) {
                   //console.log('i와 k 배열의 값이 모두 다릅니다.');
               }
             };
-            console.log('포스트벨류',postvalue);
             fetch('/m/insert/update', {
                   method: 'POST',
                   headers: {
@@ -126,46 +125,24 @@ router.get('/', function(req, res, next) {
       
           // Function to send row data to the server
           function sendRowDataToServer(rowData) {
-            console.log('로데이타',rowData)     
               const sanitizedRowData = rowData.map(row => (row === undefined ? null : row));
 
               //수정사항 프라이머리키 저장
-              hotdata = hot.getData();
-              console.log('핫데이타',hotdata);
               for(const rowDatakey of rowData){
                 changedkey.add(rowDatakey[0]);
-              };
-              console.log('체인지드프라이머리키',changedkey);
-              for(const hotdatakey of hotdata){
-                if (changedkey.has(hotdatakey[0])) {
-                    // 조건을 충족하는 경우의 처리
-                    console.log('일치', hotdatakey[0]);
-                } else {
-                    // 조건을 충족하지 않는 경우의 처리
-                    //console.log('i와 k 배열의 값이 모두 다릅니다.');
-                }
-              };
-
-              //수정사항 전체를 프라이머리키와 함께 저장
-              for(const rowDatakey of rowData){
-                edited[rowDatakey[0]] = rowDatakey;
-              };              
-              var funedited = Object.assign({}, edited);
-              editlog.unshift(funedited);
-              //console.log(editlog);                   
+              };                 
           };
           hot.addHook('afterUndo', function() {
               console.log('Ctrl+Z를 눌렀습니다. 되돌리기가 수행되었습니다.');
-              //원하는 동작을 추가
-              editlog2.unshift(editlog.splice(0,1)[0]);
-              console.log(editlog);
+              // 로직을 바꿔서 쓸모 없어져 버렸지만 언제 쓰일지 몰라서 주석처리
+              // editlog2.unshift(editlog.splice(0,1)[0]);
+              // console.log(editlog);
           });
           hot.addHook('afterRedo', function() {
               console.log('Ctrl+Y를 눌렀습니다. 다시 실행이 수행되었습니다.');
-              // 여기에 원하는 동작을 추가하세요
-              // 예를 들어, 이전 작업을 재실행하는 등의 로직을 추가할 수 있습니다.
-              editlog.unshift(editlog2.splice(0, 1)[0]);
-              console.log(editlog2);
+              // 로직을 바꿔서 쓸모 없어져 버렸지만 언제 쓰일지 몰라서 주석처리
+              // editlog.unshift(editlog2.splice(0, 1)[0]);
+              // console.log(editlog2);
           });
           newrowcount = 0;
           hot.addHook('afterCreateRow', function(index, amount, source) {
@@ -216,14 +193,12 @@ router.post('/', (req, res, next) => {
 router.post('/update', function(req, res, next) {
   console.log(req.body.rowData);
   resresult ='';
-  sql = `UPDATE project_table SET project_code = ?, service_code = ?, manage_code = ?, project_name = ?, new_inspectiontype = ?, old_inspectiontype = ?, open_date = ?, relative_comp = ?, comp1 = ?, part1 = ?, manager1 = ?, manager1_phone = ?, comp2 = ?, part2 = ?, manager2 = ?, manager2_phone = ?, pentest = ?, source_code = ?, infra = ?, note = ?, check1 = ?, check2 = ?, check3 = ?, check4 = ?, check5 = ?, check6 = ?, check7 = ?, old_manage_code = ?, old_project = ? WHERE seq = ?`;
+  sql = `UPDATE project_table SET del=?, project_code = ?, service_code = ?, manage_code = ?, project_name = ?, new_inspectiontype = ?, old_inspectiontype = ?, open_date = ?, relative_comp = ?, comp1 = ?, part1 = ?, manager1 = ?, manager1_phone = ?, comp2 = ?, part2 = ?, manager2 = ?, manager2_phone = ?, pentest = ?, source_code = ?, infra = ?, note = ?, check1 = ?, check2 = ?, check3 = ?, check4 = ?, check5 = ?, check6 = ?, check7 = ?, old_manage_code = ?, old_project = ? WHERE seq = ?`;
   for(const key of req.body.rowData){
-    del = key.shift();
     seq = key.shift();
     key.push(seq);
     if (!isNaN(parseInt(seq))) {
         console.log("숫자로 시작하는 요소:", seq);
-        console.log(del);     
         connection.query(sql,key,function(err, result) {
           if (err){
             console.log(err);
