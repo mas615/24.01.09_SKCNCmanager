@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
           var newCode = ('000' + newNumber).slice(-3); // 숫자를 다시 문자열로 변환하고 'S'를 추가
           codefamily.push(newCode)
         };
+        
       res.render('index', { title: 'SK C&C MANAGER', dbtest: rows, method: "get", codefamily: codefamily });
     }); 
   });    

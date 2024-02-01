@@ -188,3 +188,15 @@ select count(*) from penetrationtest where manage_code LIKE 'A%' and testcount=0
 
 사내시스템 서비스수 url수 취약점수
 select count(*) from penetrationtest where manage_code LIKE 'A%' and testcount=0 union select sum(urlcount) from penetrationtest where manage_code LIKE 'A%' and testcount=0 union select count(*) from penetrationtest_vulner where manage_code LIKE 'A%' and testcount=0
+
+SELECT (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code, (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code, (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,(SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,(SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,(SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,(SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,(SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F;
+
+SELECT 
+    (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code,
+    (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,
+    (SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F;

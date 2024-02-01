@@ -17,30 +17,31 @@ var db = require('../db');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;
-  sql = `SELECT (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code, (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code, (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,(SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,(SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,(SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,(SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,(SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F`;
-    db.query(sql, (error, serviceCodes, fields) => {
+  db.query(`SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, if(pentest=1, "true", "false"), if(source_code=1, "true", "false"), if(infra=1, "true", "false"), note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table where del="false" ORDER BY 1 DESC`, (error, rows, fields) => {
+    if (error) throw error;
+    db.query(`(SELECT project_code FROM project_table order by 1 desc LIMIT 1) union (select service_code from project_table order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='A' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='B' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='C' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='D' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='E' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='F' order by 1 desc LIMIT 1)`, (error, serviceCodes, fields) => {
       if (error) throw error;
         var codefamily = []
-        console.log(serviceCodes[0].project_code)
-        // for( const key of serviceCodes){
-        //   serviceCodes = key.project_code;
-        //   var currentNumber = parseInt(serviceCodes.substr(1), 10); // 'S006'에서 006을 추출하고 정수로 변환
-        //   var newNumber = currentNumber + 1;
-        //   var newCode = ('000' + newNumber).slice(-3); // 숫자를 다시 문자열로 변환하고 'S'를 추가
-        //   codefamily.push(newCode)
-        // };
-        // console.log(codefamily);
-        body = `<button id="clearFiltersButton">저장!</button><br><div id="example"></div>`;
+        for( const key of serviceCodes){
+          serviceCodes = key.project_code;
+          var currentNumber = parseInt(serviceCodes.substr(1), 10); // 'S006'에서 006을 추출하고 정수로 변환
+          var newNumber = currentNumber + 1;
+          var newCode = ('000' + newNumber).slice(-3); // 숫자를 다시 문자열로 변환하고 'S'를 추가
+          codefamily.push(newCode)
+        };
+        const data = [];
+        for(const rowskey of rows){
+          const datadata = [];
+          for(const rowskeykey in rowskey){            
+            datadata.push(rowskey[rowskeykey]);
+          };
+          data.push(datadata);
+        };
+        body = `<button id="clearFiltersButton">저장!</button><a href='./insert'>추가</a><br><div id="example"></div>`;
         script = `<script src="/handsontable/handsontable.full.js"></script>
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
-          const data = [['${serviceCodes[0].project_code}','${serviceCodes[0].service_code}']];
-          datanum = 0;
-          while(datanum < 29){
-            data[0].push('');
-            datanum++;
-          };
-          console.log(data);  
+          const data = ${JSON.stringify(data)};
           let changedkey = new Set();
           let postvalue = [];
       
@@ -48,7 +49,7 @@ router.get('/', function(req, res, next) {
           const container = document.getElementById('example');
           const hot = new Handsontable(container, {
               data: data,
-              colHeaders: ['프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
+              colHeaders: ['프라이머리키', '삭제', '프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
               rowHeaders: true,
               licenseKey: 'non-commercial-and-evaluation',
               fillHandle: false,
@@ -56,7 +57,11 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
+              hiddenColumns: {
+                columns: [0], // 숨길 열의 인덱스를 지정
+                //indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
+              },
+              columns: [{ readOnly: true },{type: "checkbox"},{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;
@@ -159,7 +164,8 @@ router.get('/', function(req, res, next) {
       `;
       res.render('tmpgrid', { title : "title", head : head, body : body, script : script});
     }); 
-  }); 
+  });    
+});
 
 router.post('/', (req, res, next) => {
   var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -183,6 +189,42 @@ router.post('/', (req, res, next) => {
   });
   //302
   res.redirect(302, "/m/insert");
+});
+
+router.post('/update', function(req, res, next) {
+  console.log(req.body.rowData);
+  resresult ='';
+  sql = `UPDATE project_table SET del=?, project_code = ?, service_code = ?, manage_code = ?, project_name = ?, new_inspectiontype = ?, old_inspectiontype = ?, open_date = ?, relative_comp = ?, comp1 = ?, part1 = ?, manager1 = ?, manager1_phone = ?, comp2 = ?, part2 = ?, manager2 = ?, manager2_phone = ?, pentest = ?, source_code = ?, infra = ?, note = ?, check1 = ?, check2 = ?, check3 = ?, check4 = ?, check5 = ?, check6 = ?, check7 = ?, old_manage_code = ?, old_project = ? WHERE seq = ?`;
+  for(const key of req.body.rowData){
+    seq = key.shift();
+    key.push(seq);
+    if (!isNaN(parseInt(seq))) {
+        console.log("숫자로 시작하는 요소:", seq);
+        db.query(sql,key,function(err, result) {
+          if (err){
+            console.log(err);
+          }
+          else{
+            console.log("Number of rows updated:", result.affectedRows); // 업데이트된 행의 수 출력
+            resresult += result.affectedRows;
+          }
+        });
+        // 숫자로 시작하는 요소에 대한 처리
+    }
+    // 첫 번째 요소가 'A'로 시작하는지 확인
+    else if (typeof firstElement === 'string' && firstElement.startsWith('A')) {
+        console.log("'A'로 시작하는 요소:", seq);
+        // 'A'로 시작하는 요소에 대한 처리
+    }
+    // 숫자 또는 'A'로 시작하지 않는 경우
+    else {
+        console.log("기타 요소:", seq);
+        // 기타 요소에 대한 처리l
+    };
+  }
+  console.log(Object.keys(req.body.rowData).length);
+  count = Object.keys(req.body.rowData).length;  
+  res.status(200).json({ success: resresult });
 });
 
 module.exports = router;
