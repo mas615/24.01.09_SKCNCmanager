@@ -16,8 +16,13 @@ var db = require('../db');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;
-  db.query(`SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, if(pentest=1, "true", "false"), if(source_code=1, "true", "false"), if(infra=1, "true", "false"), note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table where del="false" ORDER BY 1 DESC`, (error, rows, fields) => {
+  var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;  
+  console.log(req.query.del);
+  sql = `SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project FROM project_table  WHERE del = 'false' ORDER BY seq DESC;`;
+  if(req.query.del == 'all'){
+    sql = `SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table ORDER BY 1 DESC`;
+  };
+  db.query(sql, (error, rows, fields) => {
     if (error) throw error;
     db.query(`(SELECT project_code FROM project_table order by 1 desc LIMIT 1) union (select service_code from project_table order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='A' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='B' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='C' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='D' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='E' order by 1 desc LIMIT 1) union (select manage_code from project_table where new_inspectiontype='F' order by 1 desc LIMIT 1)`, (error, serviceCodes, fields) => {
       if (error) throw error;
@@ -61,7 +66,7 @@ router.get('/', function(req, res, next) {
                 columns: [0], // 숨길 열의 인덱스를 지정
                 //indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
               },
-              columns: [{ readOnly: true },{type: "checkbox"},{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
+              columns: [{ readOnly: true },{type: 'checkbox',trueValue: 1, falseValue: 0},{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;
@@ -94,7 +99,15 @@ router.get('/', function(req, res, next) {
             console.log('체인지드프라이머리키',changedkey);
             for(const realhotdatakey of realhotdata){
               if (changedkey.has(realhotdatakey[0])) {
-                  // 조건을 충족하는 경우의 처리
+                  // 조건을 충족하는 경우의 처리                  
+                  for(const realhotdatakeykey in realhotdatakey){
+                    console.log('리얼핫데이타키키',realhotdatakeykey);
+                    if(realhotdatakey[realhotdatakeykey] === true){
+                      realhotdatakey[realhotdatakeykey] = 'true';
+                    }else if(realhotdatakey[realhotdatakeykey] === false){
+                      realhotdatakey[realhotdatakeykey] = 'false';
+                    };
+                  }
                   console.log('일치', realhotdatakey[0]);
                   postvalue.push(realhotdatakey);
               } else {
@@ -102,7 +115,7 @@ router.get('/', function(req, res, next) {
                   //console.log('i와 k 배열의 값이 모두 다릅니다.');
               }
             };
-            fetch('/m/insert/update', {
+            fetch('/m/projects/update', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -171,6 +184,7 @@ router.post('/', (req, res, next) => {
   var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   var values = [];
   //받은 파라미터를 values에 추가
+  console.log(req.body)
   for (const key in req.body){
     if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
       values.push(Boolean(req.body[key]))

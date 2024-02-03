@@ -200,3 +200,6 @@ SELECT
     (SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,
     (SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,
     (SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F;
+
+SELECT seq, IF(del = 1, true, false) AS del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, IF(pentest = 1, true, false) AS pentest, IF(source_code = 1, true, false) AS source_code, IF(infra = 1, true, false) AS infra, note, IF(check1 = 1, true, false) AS check1, IF(check2 = 1, true, false) AS check2, IF(check3 = 1, true, false) AS check3, IF(check4 = 1, true, false) AS check4, IF(check5 = 1, true, false) AS check5, IF(check6 = 1, true, false) AS check6, IF(check7 = 1, true, false) AS check7, old_manage_code, IF(old_project = 1, true, false) AS old_project FROM project_table  WHERE del = 'false' ORDER BY seq DESC;
+

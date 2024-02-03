@@ -20,8 +20,7 @@ router.get('/', function(req, res, next) {
   sql = `SELECT (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code, (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code, (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,(SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,(SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,(SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,(SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,(SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F`;
     db.query(sql, (error, serviceCodes, fields) => {
       if (error) throw error;
-        var codefamily = []
-        console.log(serviceCodes[0].project_code)
+        console.log(serviceCodes[0])
         // for( const key of serviceCodes){
         //   serviceCodes = key.project_code;
         //   var currentNumber = parseInt(serviceCodes.substr(1), 10); // 'S006'에서 006을 추출하고 정수로 변환
@@ -34,7 +33,10 @@ router.get('/', function(req, res, next) {
         script = `<script src="/handsontable/handsontable.full.js"></script>
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
-          const data = [['${serviceCodes[0].project_code}','${serviceCodes[0].service_code}']];
+          var codefamily = ${JSON.stringify(serviceCodes[0])};
+          const data = [[codefamily.project_code,codefamily.service_code]];
+          
+          //빈 raw용 while문
           datanum = 0;
           while(datanum < 29){
             data[0].push('');
@@ -74,8 +76,24 @@ router.get('/', function(req, res, next) {
                   if (source === 'edit') {
                       const rowIndices = changes.map(change => change[0]);
                       const rowDataToSend = rowIndices.map(rowIndex => hot.getDataAtRow(rowIndex));
-
                       sendRowDataToServer(rowDataToSend);
+                      console.log(changes);
+                        changes.forEach(([row, prop, oldValue, newValue]) => {
+                            if (prop === 4) {
+                                // '신규 점검유형'이 변경되었을 때, '기존 점검유형' 열을 변경
+                                const rowIndex = row;
+                                const oldValue = hot.getDataAtCell(rowIndex, 4);
+            
+                                // 예를 들어, '신규 점검유형'이 'A'라면 '기존 점검유형'을 '기존 A'로 변경
+                                if (oldValue === 'A') {
+                                    hot.setDataAtCell(rowIndex, 2, '${serviceCodes[0].manage_code_A}');
+                                } else if (oldValue === 'B') {
+                                    // '신규 점검유형'이 'B'일 때 다른 처리
+                                }
+                                // 필요에 따라 다른 경우에 대한 처리 추가
+                            }
+                            // 다른 열에 대한 변경 처리도 추가할 수 있음
+                        });                    
                   }
               },
           });
@@ -88,16 +106,9 @@ router.get('/', function(req, res, next) {
             console.log('리얼핫데이타',realhotdata);
             console.log('체인지드프라이머리키',changedkey);
             for(const realhotdatakey of realhotdata){
-              if (changedkey.has(realhotdatakey[0])) {
-                  // 조건을 충족하는 경우의 처리
-                  console.log('일치', realhotdatakey[0]);
-                  postvalue.push(realhotdatakey);
-              } else {
-                  // 조건을 충족하지 않는 경우의 처리
-                  //console.log('i와 k 배열의 값이 모두 다릅니다.');
-              }
+              postvalue.push(realhotdatakey);
             };
-            fetch('/m/insert/update', {
+            fetch('/m/insert', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -148,8 +159,24 @@ router.get('/', function(req, res, next) {
             hot.setDataAtCell(index, 1, '이 행은 저장되지 않습니다.');
             // changedkey.add('A'+newrowcount);
             // newrowcount ++;
-            // hot.alter('remove_row', index);
+            // hot.alter('remove_row', index);            
           });
+          
+          // //헤더에 버튼 추가
+          // hot.addHook('afterGetRowHeader', function (row, TH) {
+          //     // 비어있는 헤더 셀에 버튼을 추가합니다.
+          //     if (row >= 0 && row < hot.countRows()) {
+          //         const button = document.createElement('button');
+          //         button.textContent = '+';
+          //         button.onclick = function () {
+          //             // 버튼 클릭 시 수행할 동작을 정의합니다.
+          //             console.log('Button clicked!');
+          //         };
+          
+          //         // 버튼을 헤더 셀에 추가합니다.
+          //         TH.appendChild(button);
+          //     }
+          // });
 
           //버튼연결
           document.getElementById('clearFiltersButton').addEventListener('click', function() {
@@ -165,24 +192,25 @@ router.post('/', (req, res, next) => {
   var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   var values = [];
   //받은 파라미터를 values에 추가
-  for (const key in req.body){
-    if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
-      values.push(Boolean(req.body[key]))
-    } else {
-      values.push(String(req.body[key]))
-    };
-  };
-  //쿼리 실행
-  db.query(sql,values,function(err, rows, fields) {
-    if (err){
-      console.log(err);
-    }
-    else{
-      console.log(rows.insertId);
-    }
-  });
-  //302
-  res.redirect(302, "/m/insert");
+  console.log(req.body);
+  // for (const key in req.body){
+  //   if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
+  //     values.push(Boolean(req.body[key]))
+  //   } else {
+  //     values.push(String(req.body[key]))
+  //   };
+  // };
+  // //쿼리 실행
+  // db.query(sql,values,function(err, rows, fields) {
+  //   if (err){
+  //     console.log(err);
+  //   }
+  //   else{
+  //     console.log(rows.insertId);
+  //   }
+  // });
+  // //302
+  res.status(200).json({ success: "resresult" });
 });
 
 module.exports = router;
