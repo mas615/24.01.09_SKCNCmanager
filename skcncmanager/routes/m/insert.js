@@ -16,10 +16,29 @@ var db = require('../db');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;
+  var head = `
+    <link href="/handsontable/handsontable.full.css" rel="stylesheet">
+    <style>
+      /* "저장!" 버튼을 고정 위치로 설정 */
+      #clearFiltersButton {
+          position: fixed; /* 고정 위치로 설정 */
+          bottom: 20px; /* 아래에서 20px 떨어진 위치에 표시 */
+          right: 20px; /* 오른쪽에서 20px 떨어진 위치에 표시 */
+          z-index: 999; /* 다른 요소 위에 표시 */
+      }
+    </style>`;
   sql = `SELECT (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code, (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code, (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,(SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,(SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,(SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,(SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,(SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F`;
     db.query(sql, (error, serviceCodes, fields) => {
       if (error) throw error;
+        console.log(serviceCodes[0])
+        for(let servicecodeskey in serviceCodes[0]){
+          newcodes = serviceCodes[0][servicecodeskey];
+          if (typeof serviceCodes[0][servicecodeskey] === 'string' && /^[a-zA-Z]/.test(serviceCodes[0][servicecodeskey])) {
+            // 알파벳을 제거하고 정수로 변환
+            nostringint = parseInt(serviceCodes[0][servicecodeskey].replace(/[^0-9]/g, ''), 10);
+            serviceCodes[0][servicecodeskey] = ("000"+(nostringint+1)).slice(-3);
+          };
+        };
         console.log(serviceCodes[0])
         // for( const key of serviceCodes){
         //   serviceCodes = key.project_code;
@@ -34,12 +53,12 @@ router.get('/', function(req, res, next) {
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
           var codefamily = ${JSON.stringify(serviceCodes[0])};
-          const data = [[codefamily.project_code,codefamily.service_code]];
+          const data = [['P'+codefamily.project_code,'S'+codefamily.service_code]];
           
           //빈 raw용 while문
           datanum = 0;
           while(datanum < 29){
-            data[0].push('');
+            data[0].push(null);
             datanum++;
           };
           console.log(data);  
@@ -58,7 +77,7 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
+              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;
@@ -86,9 +105,17 @@ router.get('/', function(req, res, next) {
             
                                 // 예를 들어, '신규 점검유형'이 'A'라면 '기존 점검유형'을 '기존 A'로 변경
                                 if (oldValue === 'A') {
-                                    hot.setDataAtCell(rowIndex, 2, '${serviceCodes[0].manage_code_A}');
+                                    hot.setDataAtCell(rowIndex, 2, 'A${serviceCodes[0].manage_code_A}');
                                 } else if (oldValue === 'B') {
-                                    // '신규 점검유형'이 'B'일 때 다른 처리
+                                    hot.setDataAtCell(rowIndex, 2, 'B${serviceCodes[0].manage_code_B}');
+                                } else if (oldValue === 'C') {
+                                    hot.setDataAtCell(rowIndex, 2, 'C${serviceCodes[0].manage_code_C}');
+                                } else if (oldValue === 'D') {
+                                    hot.setDataAtCell(rowIndex, 2, 'D${serviceCodes[0].manage_code_D}');
+                                } else if (oldValue === 'E') {
+                                    hot.setDataAtCell(rowIndex, 2, 'E${serviceCodes[0].manage_code_E}');
+                                } else if (oldValue === 'F') {
+                                    hot.setDataAtCell(rowIndex, 2, 'F${serviceCodes[0].manage_code_F}');
                                 }
                                 // 필요에 따라 다른 경우에 대한 처리 추가
                             }
@@ -106,6 +133,14 @@ router.get('/', function(req, res, next) {
             console.log('리얼핫데이타',realhotdata);
             console.log('체인지드프라이머리키',changedkey);
             for(const realhotdatakey of realhotdata){
+              for(const realhotdatakeykey in realhotdatakey){
+                console.log('리얼핫데이타키키',realhotdatakeykey);
+                if(realhotdatakey[realhotdatakeykey] === true){
+                  realhotdatakey[realhotdatakeykey] = 'true';
+                }else if(realhotdatakey[realhotdatakeykey] === false){
+                  realhotdatakey[realhotdatakeykey] = 'false';
+                };
+              };
               postvalue.push(realhotdatakey);
             };
             fetch('/m/insert', {
@@ -161,22 +196,12 @@ router.get('/', function(req, res, next) {
             // newrowcount ++;
             // hot.alter('remove_row', index);            
           });
-          
-          // //헤더에 버튼 추가
-          // hot.addHook('afterGetRowHeader', function (row, TH) {
-          //     // 비어있는 헤더 셀에 버튼을 추가합니다.
-          //     if (row >= 0 && row < hot.countRows()) {
-          //         const button = document.createElement('button');
-          //         button.textContent = '+';
-          //         button.onclick = function () {
-          //             // 버튼 클릭 시 수행할 동작을 정의합니다.
-          //             console.log('Button clicked!');
-          //         };
-          
-          //         // 버튼을 헤더 셀에 추가합니다.
-          //         TH.appendChild(button);
-          //     }
-          // });
+
+          hot.addHook('afterRender', function() {
+            const container = hot.rootElement.parentNode;
+            const button = document.getElementById('clearFiltersButton');
+            container.appendChild(button);
+          });
 
           //버튼연결
           document.getElementById('clearFiltersButton').addEventListener('click', function() {
@@ -189,10 +214,10 @@ router.get('/', function(req, res, next) {
   }); 
 
 router.post('/', (req, res, next) => {
-  var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project, del) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
   var values = [];
   //받은 파라미터를 values에 추가
-  console.log(req.body);
+  console.log(req.body.rowData[0]);
   // for (const key in req.body){
   //   if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
   //     values.push(Boolean(req.body[key]))
@@ -200,16 +225,16 @@ router.post('/', (req, res, next) => {
   //     values.push(String(req.body[key]))
   //   };
   // };
-  // //쿼리 실행
-  // db.query(sql,values,function(err, rows, fields) {
-  //   if (err){
-  //     console.log(err);
-  //   }
-  //   else{
-  //     console.log(rows.insertId);
-  //   }
-  // });
-  // //302
+  //쿼리 실행
+  db.query(sql,req.body.rowData[0],function(err, rows, fields) {
+    if (err){
+      console.log(err);
+    }
+    else{
+      console.log(rows.insertId);
+    }
+  });
+  //302
   res.status(200).json({ success: "resresult" });
 });
 

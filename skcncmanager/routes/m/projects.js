@@ -16,7 +16,17 @@ var db = require('../db');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;  
+  var head = `
+    <link href="/handsontable/handsontable.full.css" rel="stylesheet">
+    <style>
+      /* "저장!" 버튼을 고정 위치로 설정 */
+      #clearFiltersButton {
+          position: fixed; /* 고정 위치로 설정 */
+          bottom: 20px; /* 아래에서 20px 떨어진 위치에 표시 */
+          right: 20px; /* 오른쪽에서 20px 떨어진 위치에 표시 */
+          z-index: 999; /* 다른 요소 위에 표시 */
+      }
+    </style>`; 
   console.log(req.query.del);
   sql = `SELECT seq, del, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y-%m-%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project FROM project_table  WHERE del = 'false' ORDER BY seq DESC;`;
   if(req.query.del == 'all'){
@@ -54,7 +64,7 @@ router.get('/', function(req, res, next) {
           const container = document.getElementById('example');
           const hot = new Handsontable(container, {
               data: data,
-              colHeaders: ['프라이머리키', '삭제', '프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
+              colHeaders: ['Seq', '삭제', '프로젝트코드','서비스코드','관리코드','프로젝트명','신규 점검유형','기존 점검유형','open일','관계사명','담당업체','담당부서','담당자','연락처','담당업체','담당부서','담당자','연락처','모의해킹','소스코드 진단','인프라 진단','비고','신규투자(회사)','사업팀요청(자체투자)','사내시스템','대외인증','그룹공통','사업팀요청(관계사)','멤버사진단','23년관리코드','23년이관현황'],
               rowHeaders: true,
               licenseKey: 'non-commercial-and-evaluation',
               fillHandle: false,
@@ -62,10 +72,10 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              hiddenColumns: {
-                columns: [0], // 숨길 열의 인덱스를 지정
-                //indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
-              },
+              // hiddenColumns: {
+              //   columns: [0], // 숨길 열의 인덱스를 지정
+              //   indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
+              // },
               columns: [{ readOnly: true },{type: 'checkbox',trueValue: 1, falseValue: 0},{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D']},{},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
               ],
               afterPaste: (data, coords) => {
