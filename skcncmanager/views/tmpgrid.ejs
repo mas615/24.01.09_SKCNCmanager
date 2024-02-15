@@ -12,9 +12,10 @@
     <script src="/net/all.js" crossorigin="anonymous"></script>
 
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="/handsontable/handsontable.full.css" rel="stylesheet">
     <%- head %>
-  </head>
-  <body class="sb-nav-fixed">
+  </head>  
+  <body class="sb-nav-fixed sb-sidenav-toggled">    
       <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="/m/projects">SK C&C Proj. Manager</a>
@@ -112,6 +113,7 @@
         </div>
         <div id="layoutSidenav_content">
             <main>
+            <h4><%= title %></h4>
             <%- body %> 
             <%- script %>
             </main>
@@ -131,9 +133,6 @@
     </div>
     <script src="/net/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="/js/scripts.js"></script>
-    <script src="/net/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="/assets/demo/chart-area-demo.js"></script>
-    <script src="/assets/demo/chart-bar-demo.js"></script>
     <script src="/net/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="/js/datatables-simple-demo.js"></script>
   </body>

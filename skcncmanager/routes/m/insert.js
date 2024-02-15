@@ -77,7 +77,7 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: "date", dateFormat: 'YYYY-MM-DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
+              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: "date", dateFormat: 'YYYY.MM.DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;
@@ -134,14 +134,13 @@ router.get('/', function(req, res, next) {
             console.log('체인지드프라이머리키',changedkey);
             for(const realhotdatakey of realhotdata){
               for(const realhotdatakeykey in realhotdatakey){
-                console.log('리얼핫데이타키키',realhotdatakeykey);
                 if(realhotdatakey[realhotdatakeykey] === true){
                   realhotdatakey[realhotdatakeykey] = 'true';
                 }else if(realhotdatakey[realhotdatakeykey] === false){
                   realhotdatakey[realhotdatakeykey] = 'false';
                 };
               };
-              postvalue.push(realhotdatakey);
+              postvalue.push(realhotdata);
             };
             fetch('/m/insert', {
                   method: 'POST',
@@ -209,7 +208,7 @@ router.get('/', function(req, res, next) {
           });
       </script>
       `;
-      res.render('tmpgrid', { title : "title", head : head, body : body, script : script});
+      res.render('tmpgrid', { title : "Project - 추가", head : head, body : body, script : script});
     }); 
   }); 
 
@@ -217,7 +216,17 @@ router.post('/', (req, res, next) => {
   var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project, del) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
   var values = [];
   //받은 파라미터를 values에 추가
-  console.log(req.body.rowData[0]);
+  //console.log(req.body.rowData[0]);
+  for(const reqkey of req.body.rowData[0]){
+    db.query(sql,reqkey,function(err, rows, fields) {
+      if (err){
+        console.log(err);
+      }
+      else{
+        console.log(rows.insertId);
+      }
+    });
+  };
   // for (const key in req.body){
   //   if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
   //     values.push(Boolean(req.body[key]))
@@ -226,14 +235,14 @@ router.post('/', (req, res, next) => {
   //   };
   // };
   //쿼리 실행
-  db.query(sql,req.body.rowData[0],function(err, rows, fields) {
-    if (err){
-      console.log(err);
-    }
-    else{
-      console.log(rows.insertId);
-    }
-  });
+  // db.query(sql,req.body.rowData[0],function(err, rows, fields) {
+  //   if (err){
+  //     console.log(err);
+  //   }
+  //   else{
+  //     console.log(rows.insertId);
+  //   }
+  // });
   //302
   res.status(200).json({ success: "resresult" });
 });

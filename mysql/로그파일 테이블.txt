@@ -1,0 +1,9 @@
+CREATE TABLE log_table(
+    seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ip VARCHAR(20),
+    sqls VARCHAR(255),
+    value VARCHAR(255),
+    times DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO log_table (ip, sqls, value) VALUES ('192.168.1.1', 'SELECT * FROM users', 'some_value');
