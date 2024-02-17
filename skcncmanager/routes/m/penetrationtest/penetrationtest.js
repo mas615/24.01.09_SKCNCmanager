@@ -9,6 +9,7 @@ const pushdetail = require('./pushdetail.js');
 const pentestcount = require('./pentestcount.js');
 const gridtest = require('./gridtest.js');
 const penetrationtestinsert = require('./penetrationtestinsert.js');
+const detailtest = require('./detailtest.js');
 
 router.use("/detail", detail);
 router.use("/pushvulner", pushvulner);
@@ -16,6 +17,7 @@ router.use("/pushdetail", pushdetail);
 router.use("/pentestcount", pentestcount);
 router.use("/gridtest", gridtest);
 router.use("/penetrationtestinsert", penetrationtestinsert);
+router.use("/detailtest", detailtest);
 
 router.get('/', function(req, res, next) {
     db.query('select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) order by manage_code', (error, projectcode, fields) => {
@@ -23,7 +25,7 @@ router.get('/', function(req, res, next) {
         for(const projectcodekey of projectcode){
             select += `<option value="${projectcodekey.manage_code}">[${projectcodekey.manage_code}] : ${projectcodekey.project_name}</option>`
         };
-    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) and pentester LIKE '%%' ORDER BY penetrationtest.manage_code`;
+    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
     db.query(sql, (error, rows, fields) => {
       if (error) throw error;
         const data = [];

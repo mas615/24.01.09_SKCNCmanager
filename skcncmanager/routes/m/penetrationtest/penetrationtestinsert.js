@@ -59,11 +59,12 @@ router.get('/', function(req, res, next) {
               })
               .then(response => response.json())
               .then(data => {
-                  console.log(data);
-                  alert('저장 성공');
+                  console.log(data.success);
+                  alert(data.success);
                   changedkey = new Set();            
                   postvalue = [];
-                  location.reload();
+                  var href = "./detail?testcount=0&code="+data.success;
+                  location.href=href;
 
               })
               .catch(error => {
@@ -134,7 +135,7 @@ router.post('/', (req, res, next) => {
     //   }
     // });
     //302
-    res.status(200).json({ success: "resresult" });
+    res.status(200).json({ success: req.body.rowData[0][0][0] });
     //connection.end();
   });
 
