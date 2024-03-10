@@ -138,11 +138,13 @@ router.get('/', function(req, res, next) {
                   realhotdatakey[realhotdatakeykey] = 'true';
                 }else if(realhotdatakey[realhotdatakeykey] === false){
                   realhotdatakey[realhotdatakeykey] = 'false';
+                }else if(realhotdatakey[realhotdatakeykey] === ''){
+                  realhotdatakey[realhotdatakeykey] = null;
                 };
               };
               postvalue.push(realhotdata);
             };
-            fetch('/m/insert', {
+            fetch('/m/api/insert/project', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -227,23 +229,6 @@ router.post('/', (req, res, next) => {
       }
     });
   };
-  // for (const key in req.body){
-  //   if (key === 17 || key === 18 || key === 19 || key === 21 || key === 22 || key === 23 || key === 24 || key === 25 || key === 26 || key === 27 || key === 29) {
-  //     values.push(Boolean(req.body[key]))
-  //   } else {
-  //     values.push(String(req.body[key]))
-  //   };
-  // };
-  //쿼리 실행
-  // db.query(sql,req.body.rowData[0],function(err, rows, fields) {
-  //   if (err){
-  //     console.log(err);
-  //   }
-  //   else{
-  //     console.log(rows.insertId);
-  //   }
-  // });
-  //302
   res.status(200).json({ success: "resresult" });
 });
 

@@ -46,6 +46,8 @@ router.get('/', function(req, res, next) {
                   realhotdatakey[realhotdatakeykey] = 'true';
                 }else if(realhotdatakey[realhotdatakeykey] === false){
                   realhotdatakey[realhotdatakeykey] = 'false';
+                }else if(realhotdatakey[realhotdatakeykey] === ''){
+                  realhotdatakey[realhotdatakeykey] = null;
                 };
               };
               postvalue.push(realhotdata);

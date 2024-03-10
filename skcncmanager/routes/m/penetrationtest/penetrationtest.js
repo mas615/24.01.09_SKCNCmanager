@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
           data.push(datadata);
         };
         var head = `<link href="/handsontable/handsontable.full.css" rel="stylesheet">`;
-        var body = `<button id="clearFiltersButton" onclick='location.href="./penetrationtest/penetrationtestinsert"'>최초진단 추가</button><div id="example"></div>`;
+        var body = `<button id="clearFiltersButton" onclick='location.href="./penetrationtest/penetrationtestinsert"'>대상 추가</button><div id="example"></div>`;
         script = `<script src="/handsontable/handsontable.full.js"></script>
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
