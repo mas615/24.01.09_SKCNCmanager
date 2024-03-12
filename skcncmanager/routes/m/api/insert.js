@@ -25,7 +25,8 @@ router.post('/pentest', (req, res, next) => {
   var values = []
   console.log('벨류',values);
   //받은 파라미터를 values에 추가
-  console.log('리퀘스트 바디',req.body);
+  console.log('리퀘스트 바디',req.body.rowData[0]);
+  //null체크
   for (const key in req.body){
     if(req.body[key]==''){
       values.push(null);
@@ -33,8 +34,7 @@ router.post('/pentest', (req, res, next) => {
       values.push(req.body[key]);
     };        
   };
-  req.body.rowData[0][0][0] = req.body.rowData[0][0][0].substring(1,5);
-  console.log(req.body.rowData[0][0][0]);
+  //for문 돌려서 넣기
   for(const reqkey of req.body.rowData[0]){
     db.query(sql,reqkey,function(err, rows, fields) {
       if (err){
@@ -46,7 +46,56 @@ router.post('/pentest', (req, res, next) => {
     });
   };
   res.status(200).json({ success: req.body.rowData[0][0][0] });
-  //connection.end();
+});
+
+router.post('/vulner', function(req, res, next) { 
+  body='';    
+  sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  sql2 = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  values = [];
+  for(const bodykey of req.body.rowData){
+    console.log(bodykey);
+    db.query(sql, bodykey, (err, rows, fields) => {
+      if(err){
+        console.log(err);
+      }else{
+        console.log(rows);
+      };
+    });
+  };
+  // console.log('testcount : ',req.body[2]);
+  // if(req.body[2] !== '0'){
+  //   console.log('if로 갔을경우.');
+  //   connection.query(sql,values, (err, rows, fields) => {
+  //     if (err){
+  //       console.log(err);
+  //     }
+  //     else{
+  //       console.log(rows.insertId);
+  //     };
+  //     values[1] = 0; 
+  //     connection.query(sql2,values, (err, rows, fields) => {
+  //       if (err){
+  //         console.log(err);
+  //       }
+  //       else{
+  //         console.log(rows.insertId);
+  //       }
+  //       res.redirect(302, `/m/penetrationtest/detail?code=${req.body[1]}&testcount=${req.body[2]}`);
+  //     });
+  //   });
+  // }else{
+  //   console.log('else로 갔을경우.');
+  //   connection.query(sql,values, (err, rows, fields) => {
+  //     if (err){
+  //       console.log(err);
+  //     }
+  //     else{
+  //       console.log(rows.insertId);
+  //     }
+  //     res.redirect(302, `/m/penetrationtest/detail?code=${req.body[1]}&testcount=${req.body[2]}`);
+  //   });      
+  // };    
 });
 
 module.exports = router;
