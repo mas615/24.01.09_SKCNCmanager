@@ -23,29 +23,37 @@ router.post('/pentest', (req, res, next) => {
   //for문 돌려서 넣기 + 에러나면 에러 카운트 보내기 + for문 다돌면 그때 res보내기.
     db.query(sql,req.body.rowData[0][0],function(err, rows, fields) {
       if (err){
-        res.status(500).json({ success: err.sqlMessage });
+        res.status(500).json({ "진단대상 오류": err.sqlMessage });
+        console.error(err);
       }
       else{
-        res.status(200).json({ success: req.body.rowData[0][0][0] });
+        res.status(200).json({ data: req.body.rowData[0][0][0] });
       }
     });
 });
 
 router.post('/vulner', function(req, res, next) { 
-  sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
-  sql2 = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
-
-  for(const bodykey of req.body.rowData){
-    db.query(sql, bodykey, (err, rows, fields) => {
-      if(err){
-        console.log(err);
-      }else{
-        console.log(rows);
-      };    
+  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  const insertions = req.body.rowData.map(bodykey => {
+    return new Promise((resolve, reject) => {
+      db.query(sql, bodykey, (err, rows, fields) => {
+        if(err){
+          reject(err);
+        } else {
+          resolve(rows);
+        }    
+      });
     });
-  };
-  
-  res.status(200).json({ success: "ㅎㅇㅎㅇ" });
+  });
+
+  Promise.all(insertions)
+    .then(() => {
+      res.status(200).json({ data: "ㅎㅇㅎㅇ" });
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ "취약점 오류" : error.sqlMessage });
+    });
 });
 
 router.post('/addvulner', function(req, res, next) { 

@@ -75,8 +75,9 @@ router.get('/', function(req, res, next) {
                 console.log('진단대상',allData);
                 console.log('취약점',allData2);
                 var postvalue = [];
+                var postvalue2 = [];
                 postvalue.push(allData);
-                //postvalue.push(allData2);
+                postvalue2.push(allData2);
 
                 fetch('../api/insert/pentest', {
                     method: 'POST',
@@ -85,29 +86,33 @@ router.get('/', function(req, res, next) {
                     },
                     body: JSON.stringify({ rowData: postvalue }),
                 })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    // 첫 번째 요청이 성공하면 두 번째 요청을 보냄
+                    return fetch('../api/insert/vulner', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ rowData: allData2 }),
+                    });
+                })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);           
+                    console.log(data);
+                    alert("저장 성공")
                 })
                 .catch(error => {
                     console.error('Error updating row data:', error);
+                    alert("알수 없는 오류가 발생하였습니다. 데이터를 확인해주세요.")
                 });
-
-                // fetch('../api/insert/vulner', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({ rowData: allData2 }),
-                // })
-                // .then(response => response.json())
-                // .then(data => {
-                //     console.log(data);           
-                // })
-                // .catch(error => {
-                //     console.error('Error updating row data:', error);
-                //     alert('저장 실패, 다시 시도해주세요.');
-                // });
+                
                 
             };
     
