@@ -75,15 +75,30 @@ router.get('/', function(req, res, next) {
                 console.log('진단대상',allData);
                 console.log('취약점',allData2);
                 var postvalue = [];
-                //postvalue.push(allData);
-                postvalue.push(allData2);
+                postvalue.push(allData);
+                //postvalue.push(allData2);
 
-                // fetch('../api/insert/pentest', {
+                fetch('../api/insert/pentest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ rowData: postvalue }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);           
+                })
+                .catch(error => {
+                    console.error('Error updating row data:', error);
+                });
+
+                // fetch('../api/insert/vulner', {
                 //     method: 'POST',
                 //     headers: {
                 //         'Content-Type': 'application/json',
                 //     },
-                //     body: JSON.stringify({ rowData: postvalue }),
+                //     body: JSON.stringify({ rowData: allData2 }),
                 // })
                 // .then(response => response.json())
                 // .then(data => {
@@ -93,22 +108,6 @@ router.get('/', function(req, res, next) {
                 //     console.error('Error updating row data:', error);
                 //     alert('저장 실패, 다시 시도해주세요.');
                 // });
-
-                fetch('../api/insert/vulner', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ rowData: allData2 }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);           
-                })
-                .catch(error => {
-                    console.error('Error updating row data:', error);
-                    alert('저장 실패, 다시 시도해주세요.');
-                });
                 
             };
     
