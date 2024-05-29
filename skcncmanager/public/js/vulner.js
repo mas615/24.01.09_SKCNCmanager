@@ -1,0 +1,1 @@
+const vulner = ['AA인젝션', 'BB크사', 'CC암호', 'DD평문', 'EE취암알'];

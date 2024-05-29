@@ -19,7 +19,7 @@ router.post('/project', (req, res, next) => {
 });
 
 router.post('/pentest', (req, res, next) => {
-  var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, manday, startdate, enddate, actdate, memo) VALUES (?, '1', ?, ?, ?, 0, ?, ?, ?, ?, ?)";
+  var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)";
   //for문 돌려서 넣기 + 에러나면 에러 카운트 보내기 + for문 다돌면 그때 res보내기.
     db.query(sql,req.body.rowData[0][0],function(err, rows, fields) {
       if (err){
@@ -30,6 +30,45 @@ router.post('/pentest', (req, res, next) => {
         res.status(200).json({ data: req.body.rowData[0][0][0] });
       }
     });
+});
+
+router.post('/pushdetails', (req, res, next) => {
+  var sql = "INSERT INTO penetrationtest (manage_code, testcount, url, urlcount, pentester, status, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  console.log(req.body);  
+  db.query(sql,req.body[0],function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ "실패": "실패" });
+      console.error(err);
+    }
+    else{
+      res.status(200).json({ "성공": "성공" });
+    }
+  });
+});
+
+router.post('/pushdetails2', async (req, res, next) => {
+  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  try {
+    // 모든 쿼리를 Promise.all로 실행
+    await Promise.all(req.body.map(key => {
+      return new Promise((resolve, reject) => {
+        db.query(sql, key, function(err, rows, fields) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+    }));
+
+    // 모든 쿼리가 성공적으로 실행되면
+    res.status(200).json({ "성공": "성공" });
+  } catch (err) {
+    // 하나라도 오류가 발생하면
+    console.error(err);
+    res.status(500).json({ "오류": "데이터베이스 오류 발생" });
+  }
 });
 
 router.post('/vulner', function(req, res, next) { 
