@@ -77,7 +77,7 @@ router.get('/', function(req, res, next) {
               columnSorting: true, // 정렬 기능 활성화
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
-              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: "date", dateFormat: 'YYYY.MM.DD'},{},{},{},{},{},{},{},{},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{type: "checkbox"},{},{type: "checkbox"}
+              columns: [{},{},{},{},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: 'dropdown',source: ['A', 'B', 'C', 'D','E','F']},{type: "date", dateFormat: 'YYYY.MM.DD'},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}
               ],
               afterPaste: (data, coords) => {
                   const a = coords[0].startRow;

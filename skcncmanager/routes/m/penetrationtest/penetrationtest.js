@@ -13,6 +13,7 @@ const penetrationtestinsert = require('./penetrationtestinsert.js');
 const detailtest = require('./detailtest.js');
 const details = require('./details.js');
 const penetrationtest_manage = require('./penetrationtest_manage.js');
+const vulner_manage = require('./vulner_manage.js');
 
 router.use("/detail", detail);
 router.use("/pushvulner", pushvulner);
@@ -24,6 +25,7 @@ router.use("/penetrationtestinsert", penetrationtestinsert);
 router.use("/detailtest", detailtest);
 router.use("/details", details);
 router.use("/penetrationtest_manage", penetrationtest_manage);
+router.use("/vulner_manage", vulner_manage);
 
 router.get('/', function(req, res, next) {
     db.query('select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) order by manage_code', (error, projectcode, fields) => {

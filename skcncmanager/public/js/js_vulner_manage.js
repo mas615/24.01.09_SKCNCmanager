@@ -10,7 +10,7 @@ for(const key of data){
 };
 const hot = new Handsontable(container, {
     data: data1,
-    colHeaders: ["삭제", "No.", "관리코드", "진행상태", "URL", "URL수", "진단자", "점검회차", "시작일", "종료일", "조치 예정일","메모","공수"],
+    colHeaders: ["삭제", "No.", "관리코드", "점검회차", "취약점", "메모", "위치", "최종점검일", "상태", "담당자", "조치내용","비고","더미컬럼"],
     fillHandle: false, //셀 드래그 방지
     sortIndicator: true, // 정렬된 열 표시 활성화
     columnSorting: true, // 정렬 기능 활성화
