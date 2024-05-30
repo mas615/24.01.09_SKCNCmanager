@@ -3,7 +3,7 @@ var router = express.Router();
 var db = require('../../db');
 
 router.get('/', function(req, res, next) {
-    sql = 'select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) AND del = "false" order by manage_code';
+    sql = 'select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) order by manage_code';
     db.query(sql, (error, projectcode, fields) => {
         console.log(projectcode);
         var dropdata = [];

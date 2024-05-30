@@ -16,7 +16,8 @@
               afterOnCellMouseDown: (event, coords, TD) => {
                 if (coords.row !== -1 && coords.col === 2) { // 헤더가 아니고 관리코드 열을 클릭했는지 확인
                     const link = hot.getDataAtCell(coords.row, coords.col);
-                    window.location.href = "./penetrationtest/details?code=" + link + "&testcount=0";
+                    const link2 = hot.getDataAtCell(coords.row, 7);
+                    window.location.href = "./penetrationtest/details?code=" + link + "&testcount=" + link2;
                 }
             },
           });
