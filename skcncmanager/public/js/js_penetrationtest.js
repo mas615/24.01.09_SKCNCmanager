@@ -11,6 +11,8 @@
               dropdownMenu: true, // 필터 메뉴 활성화
               filters: true, // 필터 활성화
               rowHeaders: true, // 행 넘버 출력
+              manualColumnResize: true, // 열 크기 조정 
+              manualRowResize: true, // 행 크기 조정 
               licenseKey: 'non-commercial-and-evaluation',
               columns : [{},{},{},{},{},{},{},{},{},{},{},{},{},{}],
               afterOnCellMouseDown: (event, coords, TD) => {

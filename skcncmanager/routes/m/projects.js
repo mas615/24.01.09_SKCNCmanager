@@ -56,7 +56,7 @@ router.get('/', function(req, res, next) {
               //   columns: [0], // 숨길 열의 인덱스를 지정
               //   indicators: true // 열이 숨겨졌음을 나타내는 표시기 표시
               // },
-              columns: [{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{type: 'dropdown',source: ['A', 'B', 'C', 'D'],readOnly: true},{readOnly: true},{type: "date", dateFormat: 'YYYY.MM.DD',readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{type: "checkbox", readOnly: true},{readOnly: true},{type: "checkbox", readOnly: true}
+              columns: [{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{type: 'dropdown',source: ['A', 'B', 'C', 'D'],readOnly: true},{readOnly: true},{type: "date", dateFormat: 'YYYY.MM.DD',readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true},{readOnly: true}
               ],
           });
 

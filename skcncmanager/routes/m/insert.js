@@ -21,10 +21,6 @@ router.get('/', function(req, res, next) {
     <style>
       /* "저장!" 버튼을 고정 위치로 설정 */
       #clearFiltersButton {
-          position: fixed; /* 고정 위치로 설정 */
-          bottom: 20px; /* 아래에서 20px 떨어진 위치에 표시 */
-          right: 20px; /* 오른쪽에서 20px 떨어진 위치에 표시 */
-          z-index: 999; /* 다른 요소 위에 표시 */
       }
     </style>`;
   sql = `SELECT (SELECT project_code FROM project_table ORDER BY 1 DESC LIMIT 1) as project_code, (SELECT service_code FROM project_table ORDER BY 1 DESC LIMIT 1) as service_code, (SELECT manage_code FROM project_table WHERE new_inspectiontype='A' ORDER BY 1 DESC LIMIT 1) as manage_code_A,(SELECT manage_code FROM project_table WHERE new_inspectiontype='B' ORDER BY 1 DESC LIMIT 1) as manage_code_B,(SELECT manage_code FROM project_table WHERE new_inspectiontype='C' ORDER BY 1 DESC LIMIT 1) as manage_code_C,(SELECT manage_code FROM project_table WHERE new_inspectiontype='D' ORDER BY 1 DESC LIMIT 1) as manage_code_D,(SELECT manage_code FROM project_table WHERE new_inspectiontype='E' ORDER BY 1 DESC LIMIT 1) as manage_code_E,(SELECT manage_code FROM project_table WHERE new_inspectiontype='F' ORDER BY 1 DESC LIMIT 1) as manage_code_F`;
@@ -48,7 +44,7 @@ router.get('/', function(req, res, next) {
         //   codefamily.push(newCode)
         // };
         // console.log(codefamily);
-        body = `<button id="clearFiltersButton">저장!</button><br><div id="example"></div>`;
+        body = `현재 관리코드 + 1<div id="example2"></div><br><button id="addButton">행 추가</button> <button id="clearFiltersButton">저장!</button><div id="example"></div>`;
         script = `<script src="/handsontable/handsontable.full.js"></script>
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용

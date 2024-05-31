@@ -17,16 +17,7 @@ var db = require('../db');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var head = `
-    <link href="/handsontable/handsontable.full.css" rel="stylesheet">
-    <style>
-      /* "저장!" 버튼을 고정 위치로 설정 */
-      #clearFiltersButton {
-          position: fixed; /* 고정 위치로 설정 */
-          bottom: 20px; /* 아래에서 20px 떨어진 위치에 표시 */
-          right: 20px; /* 오른쪽에서 20px 떨어진 위치에 표시 */
-          z-index: 999; /* 다른 요소 위에 표시 */
-      }
-    </style>`; 
+    <link href="/handsontable/handsontable.full.css" rel="stylesheet">`; 
   console.log(req.query.del);
   sql = `SELECT seq, null, project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y.%m.%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project FROM project_table ORDER BY seq DESC;`;
   if(req.query.del == 'all'){

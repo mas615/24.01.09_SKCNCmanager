@@ -1,4 +1,6 @@
-const data = [['P' + codefamily.project_code, 'S' + codefamily.service_code], [], []];
+const data = [['P' + codefamily.project_code, 'S' + codefamily.service_code]];
+const data2 = [['A' + codefamily.manage_code_A, 'B' + codefamily.manage_code_B, 'C' + codefamily.manage_code_C, 'D' + codefamily.manage_code_D, 'E' + codefamily.manage_code_E]];
+console.log(codefamily);
 
 // 빈 raw용 while문
 let datanum = 0;
@@ -19,7 +21,6 @@ const hot = new Handsontable(container, {
     ],
     rowHeaders: true,
     licenseKey: 'non-commercial-and-evaluation',
-    fillHandle: false,
     sortIndicator: true, // 정렬된 열 표시 활성화
     columnSorting: true, // 정렬 기능 활성화
     dropdownMenu: true, // 필터 메뉴 활성화
@@ -27,8 +28,30 @@ const hot = new Handsontable(container, {
     columns: [
         {}, {}, {}, {}, { type: 'dropdown', source: ['사내시스템', '그룹공통', '신규투자', '사업부서요청', '멤버사진단'] },
         { type: 'dropdown', source: ['사내시스템', '그룹공통', '신규투자', '사업부서요청', '멤버사진단'] },
-        { type: 'date', dateFormat: 'YYYY.MM.DD' }, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        { type: 'date', dateFormat: 'YYYY.MM.DD' }, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
     ],
+});
+
+const container2 = document.getElementById('example2');
+const hot2 = new Handsontable(container2, {
+    data: data2,
+    colHeaders: [
+        'A', 'B', 'C', 'D', 'E'
+    ],
+    licenseKey: 'non-commercial-and-evaluation',
+    columns: [
+        {}, {}, {}, {}, {}, 
+    ],
+});
+
+var addButton = document.getElementById('addButton');
+addButton.addEventListener('click', function() {
+hot.alter('insert_row');
+});
+
+// 버튼 연결
+document.getElementById('clearFiltersButton').addEventListener('click', function () {
+    clearFilters();
 });
 
 // 진행 상황 표시를 위한 HTML 요소 추가
@@ -76,9 +99,7 @@ async function clearFilters() {
 
     alert('모든 행이 성공적으로 전송되었습니다.');
     progressElement.innerText = '진행 완료';
+    window.location.href = `/m/projects`;
 }
 
-// 버튼 연결
-document.getElementById('clearFiltersButton').addEventListener('click', function () {
-    clearFilters();
-});
+
