@@ -17,7 +17,7 @@ var db = require('../db');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var head = ``; 
-  console.log(req.query.del);
+  console.log(req.user.name);
   sql = `SELECT project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y.%m.%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project FROM project_table ORDER BY seq DESC;`;
   if(req.query.del == 'all'){
     sql = `SELECT project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, DATE_FORMAT(open_date,"%Y.%m.%d"), relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project from project_table ORDER BY 1 DESC`;
@@ -62,7 +62,7 @@ router.get('/', function(req, res, next) {
 
       </script>
       `;
-      res.render('tmpgrid', { title : "Project", head : head, body : body, script : script});
+      res.render('tmpgrid3', { title : "Project", head : head, body : body, script : script, user : req.user.username});
   });    
 });
 

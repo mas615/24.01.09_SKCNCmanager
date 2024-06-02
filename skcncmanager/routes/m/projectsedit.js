@@ -38,7 +38,7 @@ router.get('/', function(req, res, next) {
           <script src="/handsontable/handsontable.full.js"></script>
           <script>const data = ${JSON.stringify(data)};</script>
           <script src="/js/js_projectedit.js"></script>`;
-      res.render('tmpgrid', { title : "Project - 수정", head : head, body : body, script : script});
+      res.render('tmpgrid3', { title : "Project - 수정", head : head, body : body, script : script, user : req.user.username});
   });    
 });
 

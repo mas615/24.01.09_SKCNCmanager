@@ -50,7 +50,7 @@ router.get('/', function(req, res, next) {
         <script>const data = ${JSON.stringify(data)};</script>
         <script src="/js/js_penetrationtest.js"></script>`;
 
-        res.render('tmpgrid', { title : "모의해킹 종합", head : null, body : body, script : script});
+        res.render('tmpgrid3', { title : "모의해킹 종합", head : null, body : body, script : script, user : req.user.name});
         //connection.end();
     });
     });
