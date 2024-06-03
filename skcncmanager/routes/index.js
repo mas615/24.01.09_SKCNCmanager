@@ -28,10 +28,51 @@ router.get('/', function(req, res, next) {
     if(error){
       return res.status(500).send('Internal Server Error');
     };
+    console.log(req.ip);
 
     if (rows.length === 0){ // 저장된 내용이 없을때.
       body = `[${req.ip}]<br>등록된 아이피가 없습니다. 이름을 등록하세요.`
-      res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : "<script></script>", user : "username"});
+      body += `<form id="myForm">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <input type="hidden" id="hiddenValue" name="hiddenValue" value="${req.ip}">
+                    <button type="submit">Submit</button>
+                </form>`;
+      script = `
+      <script>
+          document.getElementById('myForm').addEventListener('submit', function(event) {
+              event.preventDefault(); // 폼의 기본 제출 동작 방지
+
+              const name = document.getElementById('name').value;
+              const hiddenValue = document.getElementById('hiddenValue').value;
+
+              // 데이터 준비
+              const data = [name,hiddenValue];
+
+              // 서버로 데이터 보내기
+              fetch('/m/api/insert/ip_name', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data)
+              })
+              .then(response => {
+                  if (response.status === 200) {
+                      // 상태 코드가 200인 경우 페이지 새로고침
+                      location.reload();
+                  } else {
+                      // 그 외 상태 코드인 경우 alert 창 표시
+                      alert('An error occurred: ' + response.status);
+                  }
+              })
+              .catch(error => {
+                  // 네트워크 오류 등 예외 처리
+                  alert('An error occurred: ' + error.message);
+              });
+          });
+      </script>`
+      res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : script, user : "username"});
     } else{
       console.log(rows);
       const user = rows[0];
@@ -46,9 +87,8 @@ router.get('/', function(req, res, next) {
           return res.sendStatus(403);
         };
         body = `아이피 : ${req.ip}<br>
-        토큰 : ${token}<br>
-        토큰 안의 데이터 : ${data.username}`
-        res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : "script", user : data.username});
+        ${data.username}님 접속을 환영합니다.`
+        res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : "<script></script>", user : data.username});
       });
     };    
   });
