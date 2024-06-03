@@ -124,19 +124,5 @@ router.post('/penetrationtest_manage', function(req, res, next) {
   res.status(200).json({ success: "성공" });
 });
 
-router.post('/ip_name', (req, res, next) => {
-  var sql = "INSERT INTO userip (username, ip) VALUES (?, ?)";
-  var values = req.body;
-  console.log(req.body);
-  db.query(sql,values,function(err, rows, fields) {
-    if (err){
-      res.status(500).json({ err: err });
-    }
-    else{
-      res.status(200).json({ success: "resresult" });
-    }
-  }); 
-});
-
 
 module.exports = router;

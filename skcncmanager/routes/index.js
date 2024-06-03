@@ -50,7 +50,7 @@ router.get('/', function(req, res, next) {
               const data = [name,hiddenValue];
 
               // 서버로 데이터 보내기
-              fetch('/m/api/insert/ip_name', {
+              fetch('./ip_name', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json'
@@ -92,6 +92,20 @@ router.get('/', function(req, res, next) {
       });
     };    
   });
+});
+
+router.post('/ip_name', (req, res, next) => { // 퍼미션 문제로 router.use(verifyJWT); 이전에 놓기위해 api에 넣지않고 여기에 넣음.
+  var sql = "INSERT INTO userip (username, ip) VALUES (?, ?)";
+  var values = req.body;
+  console.log(req.body);
+  db.query(sql,values,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
 });
 
 router.use(verifyJWT);
