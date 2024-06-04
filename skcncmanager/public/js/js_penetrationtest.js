@@ -1,5 +1,8 @@
+var htmiddle = [];
+for(var i = 0; i < 14 ; i++){
+  htmiddle.push({className: 'htLeft htMiddle'});
+}
 
-      
           // Handsontable을 초기화하고 옵션을 설정합니다.
           const container = document.getElementById('example');
           const hot = new Handsontable(container, {
@@ -14,14 +17,14 @@
               manualColumnResize: true, // 열 크기 조정 
               manualRowResize: true, // 행 크기 조정 
               licenseKey: 'non-commercial-and-evaluation',
-              columns : [{},{},{},{},{},{},{},{},{},{},{},{},{},{}],
+              columns : htmiddle,
               afterOnCellMouseDown: (event, coords, TD) => {
                 if (coords.row !== -1 && coords.col === 2) { // 헤더가 아니고 관리코드 열을 클릭했는지 확인
                     const link = hot.getDataAtCell(coords.row, coords.col);
                     const link2 = hot.getDataAtCell(coords.row, 7);
                     window.location.href = "./penetrationtest/details?code=" + link + "&testcount=" + link2;
                 }
-            },
+              },
           });
 
 
