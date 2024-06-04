@@ -1,8 +1,8 @@
 const container1 = document.getElementById('table1');
             const hot1 = new Handsontable(container1, {
                 licenseKey: 'non-commercial-and-evaluation',
-                colHeaders: ["진단대상", "진행상태", "URL", "URL수", "진단자", "진단공수", "진단시작일", "진단종료일", "조치예정일", "비고"],
-                columns : [{width: 300, type: 'dropdown',source:js_detailtest},{},{},{type: 'numeric'},{},{type: 'numeric'},{type: "date", dateFormat: 'YYYY.MM.DD'},{type: "date", dateFormat: 'YYYY.MM.DD'},{type: "date", dateFormat: 'YYYY.MM.DD'},{}],
+                colHeaders: ["진단대상", "진행상태", "URL", "URL수", "대상종류", "진단자", "진단공수", "진단시작일", "진단종료일", "조치예정일", "비고"],
+                columns : [{width: 300, type: 'dropdown',source:js_detailtest},{},{},{type: 'numeric'}, {type: 'dropdown',source: ["웹", "모바일", "CS"]}, {},{type: 'numeric'},{type: "date", dateFormat: 'YYYY-MM-DD'},{type: "date", dateFormat: 'YYYY-MM-DD'},{type: "date", dateFormat: 'YYYY-MM-DD'},{}],
                 data: [[null,null,null,null,null,null,null,null,null],]
             });
     
@@ -10,31 +10,9 @@ const container1 = document.getElementById('table1');
             const hot2 = new Handsontable(container2, {
                 licenseKey: 'non-commercial-and-evaluation',
                 rowHeaders: true,
-                colHeaders: ["취약점", "내용", "발생위치", "최종점검일", "조치상태", "담당자", "조치내용", "비고"],
-                columns : [{type: 'dropdown',source: vulner}, {}, {}, {type: "date", dateFormat: 'YYYY.MM.DD'}, {}, {}, {}, {}],
-                data: [[null,null,null,null,null,null,null],],
-                // afterGetRowHeader: function(row, TH) {
-                //     // 이전에 바인딩된 이벤트 핸들러 제거
-                //     var existingButton = TH.querySelector('.deleteButton');
-                //     if (existingButton) {
-                //         existingButton.removeEventListener('click', handleDeleteButtonClick);
-                //         existingButton.remove();
-                //     }
-            
-                //     // 삭제 버튼 생성 및 이벤트 핸들러 추가
-                //     var button = document.createElement('button');
-                //     button.innerHTML = 'X';
-                //     button.className = 'deleteButton';
-                //     button.addEventListener('click', function() {
-                //         hot2.alter('remove_row', row);
-                //     });
-            
-                //     // 행 헤더의 스타일 조정
-                //     TH.style.display = 'flex';
-                //     TH.style.alignItems = 'center';
-                //     TH.style.justifyContent = 'space-between';
-                //     TH.appendChild(button); // 버튼 추가
-                // }
+                colHeaders: ["취약점", "위험도", "내용", "발생위치", "진단시작일", "진단종료일", "조치상태", "비고", "담당자", "조치예정일", "조치내용"],
+                columns : [{type: 'dropdown',source: vulner}, {}, {width : 200}, {width : 200}, {type: "date", dateFormat: 'YYYY-MM-DD'}, {type: "date", dateFormat: 'YYYY-MM-DD'}, {}, {}, {}, {type: "date", dateFormat: 'YYYY-MM-DD'}, {}],
+                data: [[null,null,null,null,null,null,null,null,null,null,null],],
             });
     
             // 사용자 지정 버튼 클릭 시 행 추가

@@ -16,7 +16,7 @@ router.post('/project', (req, res, next) => {
 });
 
 router.post('/pentest', (req, res, next) => {
-  var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, pentester, testcount, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)";
+  var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, type, pentester, testcount, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)";
   //for문 돌려서 넣기 + 에러나면 에러 카운트 보내기 + for문 다돌면 그때 res보내기.
     db.query(sql,req.body.rowData[0][0],function(err, rows, fields) {
       if (err){
@@ -30,7 +30,7 @@ router.post('/pentest', (req, res, next) => {
 });
 
 router.post('/pushdetails', (req, res, next) => {
-  var sql = "INSERT INTO penetrationtest (manage_code, testcount, url, urlcount, pentester, status, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  var sql = "INSERT INTO penetrationtest (manage_code, testcount, url, urlcount, type, pentester, status, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   console.log(req.body);  
   db.query(sql,req.body[0],function(err, rows, fields) {
     if (err){
@@ -44,7 +44,7 @@ router.post('/pushdetails', (req, res, next) => {
 });
 
 router.post('/pushdetails2', async (req, res, next) => {
-  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, risklevel, memo, vulnerspot, startdate, lastdate, status, vulnermemo, vulnermanager, actdate, vulnernote) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
   try {
     // 모든 쿼리를 Promise.all로 실행
     await Promise.all(req.body.map(key => {
@@ -69,7 +69,7 @@ router.post('/pushdetails2', async (req, res, next) => {
 });
 
 router.post('/vulner', function(req, res, next) { 
-  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, memo, vulnerspot, lastdate, status, vulnermanager, vulnernote, vulnermemo) VALUES (?,?,?,?,?,?,?,?,?,?)';
+  const sql = 'INSERT INTO penetrationtest_vulner (manage_code, testcount, vulner, risklevel, memo, vulnerspot, startdate, lastdate, status, vulnermemo, vulnermanager, actdate, vulnernote) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
   const insertions = req.body.rowData.map(bodykey => {
     return new Promise((resolve, reject) => {
       db.query(sql, bodykey, (err, rows, fields) => {

@@ -28,12 +28,7 @@ router.use("/penetrationtest_manage", penetrationtest_manage);
 router.use("/vulner_manage", vulner_manage);
 
 router.get('/', function(req, res, next) {
-    db.query('select manage_code, project_name from project_table where not exists (select 1 from penetrationtest where project_table.manage_code = penetrationtest.manage_code) order by manage_code', (error, projectcode, fields) => {
-        var select 
-        for(const projectcodekey of projectcode){
-            select += `<option value="${projectcodekey.manage_code}">[${projectcodekey.manage_code}] : ${projectcodekey.project_name}</option>`
-        };
-    sql = `SELECT project_name, old_inspectiontype, penetrationtest.manage_code, status, url, urlcount, pentester, testcount, manday, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d"), memo FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
+    sql = `SELECT project_name, penetrationtest.manage_code, status, url, urlcount, type, pentester, testcount, manday, memo, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d") FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
     db.query(sql, (error, rows, fields) => {
       if (error) throw error;
         const data = [];
@@ -52,9 +47,7 @@ router.get('/', function(req, res, next) {
 
         res.render('tmpgrid3', { title : "모의해킹 종합", head : null, body : body, script : script, user : req.user.name});
         //connection.end();
-    });
-    });
-    
+    });    
 });
 
 router.post('/', (req, res, next) => {

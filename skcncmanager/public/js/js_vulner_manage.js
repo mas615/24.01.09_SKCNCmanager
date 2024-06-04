@@ -10,7 +10,7 @@ for(const key of data){
 };
 const hot = new Handsontable(container, {
     data: data1,
-    colHeaders: ["삭제", "No.", "관리코드", "점검회차", "취약점", "메모", "위치", "최종점검일", "상태", "담당자", "조치내용","비고","더미컬럼"],
+    colHeaders: ["삭제", "No.", "점검회차", "관리코드", "취약점", "위험도", "내용", "발생", "진단시작일", "진단종료일", "조치상태", "비고", "조치담당자", "조치예정일", "조치내용"],
     fillHandle: false, //셀 드래그 방지
     sortIndicator: true, // 정렬된 열 표시 활성화
     columnSorting: true, // 정렬 기능 활성화
@@ -18,7 +18,7 @@ const hot = new Handsontable(container, {
     filters: true, // 필터 활성화
     rowHeaders: true, // 행 넘버 출력
     licenseKey: 'non-commercial-and-evaluation',
-    columns : [{type: 'checkbox',trueValue: 1, falseValue: 0},{},{},{},{},{},{},{},{},{},{},{},{}],
+    columns : [{type: 'checkbox',trueValue: 1, falseValue: 0},{},{},{},{},{},{width : 200},{width : 200},{},{},{},{},{},{},{}],
     afterPaste: (data, coords) => {
         const a = coords[0].startRow;
         const b = coords[0].endRow;

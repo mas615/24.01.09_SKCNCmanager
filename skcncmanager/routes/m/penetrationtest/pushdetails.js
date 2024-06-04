@@ -3,8 +3,8 @@ var router = express.Router();
 var db = require('../../db');
 
 router.get('/', function(req, res, next) {
-    sql = 'select testcount, url, urlcount, pentester, status, manday, DATE_FORMAT(curdate(),"%y-%m-%d"), DATE_FORMAT(now(),"%y-%m-%d"), DATE_FORMAT(actdate,"%y-%m-%d"), memo from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code where penetrationtest.manage_code = ? order by penetrationtest.seq desc limit 1';
-    sql2 = `select vulner, memo, vulnerspot, DATE_FORMAT(lastdate, "%y-%m-%d"), status, vulnermanager, vulnernote, vulnermemo from penetrationtest_vulner where manage_code=? and testcount=? order by seq`;
+    sql = 'select testcount, url, urlcount, type, pentester, status, manday, DATE_FORMAT(curdate(),"20%y-%m-%d"), DATE_FORMAT(now(),"20%y-%m-%d"), DATE_FORMAT(actdate,"%y-%m-%d"), memo from penetrationtest inner join project_table on penetrationtest.manage_code = project_table.manage_code where penetrationtest.manage_code = ? order by penetrationtest.seq desc limit 1';
+    sql2 = `select vulner, risklevel, memo, vulnerspot, DATE_FORMAT(startdate, "20%y-%m-%d"), DATE_FORMAT(lastdate, "20%y-%m-%d"), status, vulnermemo, vulnermanager, actdate, vulnernote from penetrationtest_vulner where manage_code=? and testcount=? order by seq`;
     values = [req.query.code];
     values2 = [req.query.code];
     body = `<button id="addButton">취약점 추가</button><button onclick="aalert()">저장</button><br>진단차수 <div id="data"></div>취약점<br><div id="data2"></div>`;
