@@ -23,7 +23,7 @@ function verifyJWT(req, res, next) {
 };
 
 router.get('/', function(req, res, next) {
-  sql = 'select username from userip where ip = ?'
+  sql = 'select username, level from userip where ip = ?'
   db.query(sql, req.ip, (error, rows, fields) => {
     if(error){
       return res.status(500).send('Internal Server Error');
@@ -74,7 +74,7 @@ router.get('/', function(req, res, next) {
       </script>`
       res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : script, user : "username"});
     } else{
-      console.log(rows);
+      console.log(rows[0].username);
       const user = rows[0];
       const token = jwt.sign(user, SECRET_KEY, { expiresIn: '24h' });
       res.cookie('auth', token, {
@@ -86,8 +86,9 @@ router.get('/', function(req, res, next) {
         if (err) {
           return res.sendStatus(403);
         };
-        body = `아이피 : ${req.ip}<br>
-        ${data.username}님 접속을 환영합니다.`
+        body = 
+          `<h1>${data.username}님 접속을 환영합니다.</h1>
+          접속 IP : [${req.ip}]`;
         res.render('tmpgrid3', { title: 'SK C&C MANAGER', head: "", body: body, script : "<script></script>", user : data.username});
       });
     };    

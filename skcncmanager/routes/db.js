@@ -6,6 +6,7 @@ var mysql = require("mysql2");
 //     database : 'skcncmanagerdb'
 //   }); 
 // module.exports = db;
+// 이전 코드
 
 const pool = mysql.createPool({
   host     : 'localhost',

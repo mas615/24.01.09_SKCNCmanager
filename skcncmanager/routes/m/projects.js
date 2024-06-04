@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+const jwt = require('jsonwebtoken');
 
 // const mysql      = require('mysql2');
 // const connection = mysql.createConnection({
@@ -32,7 +33,22 @@ router.get('/', function(req, res, next) {
           };
           data.push(datadata);
         };
-        body = `<button id="clearFiltersButton2" onclick="location.href='./projectsedit'">수정</button> <button id="clearFiltersButton" onclick="location.href='./insert'">추가</button><div id="example"></div>`;
+        
+        // 권한 검증
+        const SECRET_KEY = 'SKCNCMAJUNYOUNG';
+        const token = req.cookies.auth;
+        body = '';
+        jwt.verify(token, SECRET_KEY, (err, data) => {
+          if (err) {
+            return res.sendStatus(403);
+          };
+          if(data.username == "허남영"){
+            body += `<button id="clearFiltersButton2" onclick="location.href='./projectsedit'">수정</button> <button id="clearFiltersButton" onclick="location.href='./insert'">추가</button>`;
+          }; 
+        });
+        // 권한 검증 끝
+
+        body += `<div id="example"></div>`;
         script = `<script src="/handsontable/handsontable.full.js"></script>
           <script>
           // 서버에서 전달된 데이터를 EJS 템플릿에서 사용
