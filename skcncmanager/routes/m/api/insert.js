@@ -120,9 +120,79 @@ router.post('/addvulner', function(req, res, next) {
 });
 
 router.post('/penetrationtest_manage', function(req, res, next) {
-  console.log(req.body);
-  res.status(200).json({ success: "성공" });
+  let arr = req.body;
+  // 첫 번째 요소 삭제
+  arr.shift();
+  // 두 번째 요소를 맨 뒤로 보내기
+  arr.push(arr.shift());
+  var sql = "UPDATE penetrationtest SET manage_code = ?, status = ?, url = ?, urlcount = ?, pentester = ?, testcount = ?, startdate = ?, enddate = ?, actdate = ?, memo = ?, manday = ?, type = ? WHERE seq = ?";
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
 });
 
+router.post('/penetrationtest_manage_del', function(req, res, next) {
+  var sql = "delete from penetrationtest where seq = ?";
+  db.query(sql,[req.body[1]],function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
+
+router.post('/penetrationtest_manage_insert', function(req, res, next) {
+  var sql = "INSERT INTO penetrationtest (manage_code, status, url, urlcount, type, pentester, testcount, manday, memo, startdate, enddate, actdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(sql,req.body,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
+
+router.post('/vulner_manage', function(req, res, next) {
+  let arr = req.body;
+  // 첫 번째 요소 삭제
+  arr.shift();
+  // 두 번째 요소를 맨 뒤로 보내기
+  arr.push(arr.shift());
+  console.log(arr);
+  var sql = "UPDATE penetrationtest_vulner SET testcount = ?, manage_code = ?, vulner = ?, risklevel = ?, memo = ?, vulnerspot = ?, startdate = ?, lastdate = ?, status = ?, vulnermemo = ?, vulnermanager = ?, actdate = ?, vulnernote = ? WHERE seq = ?";
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
+
+router.post('/vulner_manage_del', function(req, res, next) {
+  var sql = "delete from penetrationtest_vulner where seq = ?";
+  db.query(sql,[req.body[1]],function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
 
 module.exports = router;

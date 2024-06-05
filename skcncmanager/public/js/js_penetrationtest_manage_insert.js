@@ -1,16 +1,8 @@
 const container = document.getElementById('data');
-const data1 = [];
-changedkey = new Set();
-for(const key of data){
-    datadata = [null];
-    for(const keykey in key){
-        datadata.push(key[keykey]);
-    }
-    data1.push(datadata);
-};
+const data1 = [[]];
 const hot = new Handsontable(container, {
     data: data1,
-    colHeaders: ["삭제", "No.", "점검회차", "관리코드", "취약점", "위험도", "내용", "발생", "진단시작일", "진단종료일", "조치상태", "비고", "조치담당자", "조치예정일", "조치내용"],
+    colHeaders: ["관리코드", "진행상태", "URL", "URL수", "대상종류", "진단자", "점검회차","공수","메모", "시작일", "종료일", "조치 예정일"],
     fillHandle: false, //셀 드래그 방지
     sortIndicator: true, // 정렬된 열 표시 활성화
     columnSorting: true, // 정렬 기능 활성화
@@ -18,42 +10,14 @@ const hot = new Handsontable(container, {
     filters: true, // 필터 활성화
     rowHeaders: true, // 행 넘버 출력
     licenseKey: 'non-commercial-and-evaluation',
-    columns : [{type: 'checkbox',trueValue: 1, falseValue: 0},{readOnly: true},{readOnly: true},{readOnly: true},{},{},{width : 200},{width : 200},{},{},{},{width : 200},{},{},{width : 200}],
-    afterPaste: (data, coords) => {
-        const a = coords[0].startRow;
-        const b = coords[0].endRow;
-        const rowIndices = [];
-        for (let i = a; i <= b; i++) {
-            // 반복하고자 하는 동작 수행
-            rowIndices.push(i);
-        };
-        const rowDataToSend = rowIndices.map(rowIndex => hot.getDataAtRow(rowIndex));
-        for (const key of rowDataToSend){
-            changedkey.add(key[1]);
-        }
-    },
-    afterChange: (changes, source) => { // 수정사항 있는 행 seq저장
-        if (source === 'edit') {
-            const rowIndices = changes.map(change => change[0]);
-            const rowDataToSend = rowIndices.map(rowIndex => hot.getDataAtRow(rowIndex));
-            changedkey.add(rowDataToSend[0][1]);
-        }
-    }
+    columns : [{},{},{},{},{},{},{},{},{},{},{},{}],
 });
 
 async function send() {
-    const hotdata = hot.getData(); // 모든 행 할당
-    for (const check of hotdata) { // 체크를 드래그해서 한번에 여러 개 할 경우 키값 추가
-        if (check[0] == true) {
-            changedkey.add(check[1]);
-        }
-    }
-    changedkey.delete(null); // null 값 빼기
-    console.log(changedkey);
-    const filteredData = hotdata.filter(row => changedkey.has(row[1])); // changedkey와 No가 맞는 행만 필터링
-
+    const hotdata = hot.getData(); // 모든 행 할당    
+    const filteredData = hotdata.filter(row => row.some(cell => cell !== null)); // 모든 요소가 null인 행을 제외한 데이터를 필터링
     const fetchRequests = filteredData.map(row => {
-        const url = row[0] === true ? '../api/insert/vulner_manage_del' : '../api/insert/vulner_manage';
+        const url = '../../api/insert/penetrationtest_manage_insert';
         return fetch(url, {
             method: 'POST',
             headers: {
@@ -71,12 +35,14 @@ async function send() {
             }
         }
         alert('정상적으로 완료 되었습니다.');
-        window.location.href = '/m/penetrationtest/vulner_manage'; // 리다이렉션할 페이지의 URL로 변경하세요.
+        window.location.href = '/m/penetrationtest/penetrationtest_manage'; // 리다이렉션할 페이지의 URL로 변경하세요.
     } catch (error) {
         alert('오류발생!');
         console.error('Error:', error);
     }
 }
+
+// 24.06.05 이전코드
 // function send() {    
 //     hotdata = hot.getData(); // 모든 행 할당
 //     for(const check of hotdata){ // 체크를 드래그해서 한번에 여러개 할경우 키값추가

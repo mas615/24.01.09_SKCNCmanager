@@ -41,7 +41,7 @@ const pool = mysql.createPool({
 });
 
 setInterval(() => {
-  pool.query('SELECT 1', (error, results) => {
+  pool.query("INSERT INTO log_table (ip, times) VALUES ('healthcheck', CURRENT_TIMESTAMP)", (error, results) => {
     if (error) {
       console.error('Error performing keep-alive query:', error);
     } else {

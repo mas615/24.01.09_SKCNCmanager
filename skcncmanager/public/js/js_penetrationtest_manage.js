@@ -10,7 +10,7 @@ for(const key of data){
 };
 const hot = new Handsontable(container, {
     data: data1,
-    colHeaders: ["삭제", "No.", "관리코드", "진행상태", "URL", "URL수", "진단자", "점검회차", "시작일", "종료일", "조치 예정일","메모","공수","대상종류"],
+    colHeaders: ["삭제", "No.", "관리코드", "진행상태", "URL", "URL수", "대상종류", "진단자", "점검회차","공수","메모", "시작일", "종료일", "조치 예정일"],
     fillHandle: false, //셀 드래그 방지
     sortIndicator: true, // 정렬된 열 표시 활성화
     columnSorting: true, // 정렬 기능 활성화
@@ -18,7 +18,7 @@ const hot = new Handsontable(container, {
     filters: true, // 필터 활성화
     rowHeaders: true, // 행 넘버 출력
     licenseKey: 'non-commercial-and-evaluation',
-    columns : [{type: 'checkbox',trueValue: 1, falseValue: 0},{},{},{},{},{},{},{},{},{},{},{},{},{}],
+    columns : [{type: 'checkbox',trueValue: 1, falseValue: 0},{readOnly: true},{readOnly: true},{},{},{},{},{},{},{},{},{},{},{}],
     afterPaste: (data, coords) => {
         const a = coords[0].startRow;
         const b = coords[0].endRow;
@@ -41,34 +41,72 @@ const hot = new Handsontable(container, {
     }
 });
 
-function send() {    
-    hotdata = hot.getData(); // 모든 행 할당
-    for(const check of hotdata){ // 체크를 드래그해서 한번에 여러개 할경우 키값추가
-        if(check[0] == true){
+async function send() {
+    const hotdata = hot.getData(); // 모든 행 할당
+    for (const check of hotdata) { // 체크를 드래그해서 한번에 여러 개 할 경우 키값 추가
+        if (check[0] == true) {
             changedkey.add(check[1]);
-        };
-    };
+        }
+    }
     changedkey.delete(null); // null 값 빼기
     console.log(changedkey);
-    const filteredData = hotdata.filter(row => changedkey.has(row[1])); // changedkey와 No가 맞는행만 필터링
+    const filteredData = hotdata.filter(row => changedkey.has(row[1])); // changedkey와 No가 맞는 행만 필터링
 
-    fetch('../api/insert/penetrationtest_manage', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(filteredData),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    const fetchRequests = filteredData.map(row => {
+        const url = row[0] === true ? '../api/insert/penetrationtest_manage_del' : '../api/insert/penetrationtest_manage';
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(row),
+        });
     });
-};
+
+    try {
+        const responses = await Promise.all(fetchRequests);
+        for (const response of responses) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+        }
+        alert('정상적으로 완료 되었습니다.');
+        window.location.href = '/m/penetrationtest/penetrationtest_manage'; // 리다이렉션할 페이지의 URL로 변경하세요.
+    } catch (error) {
+        alert('오류발생!');
+        console.error('Error:', error);
+    }
+}
+
+// 24.06.05 이전코드
+// function send() {    
+//     hotdata = hot.getData(); // 모든 행 할당
+//     for(const check of hotdata){ // 체크를 드래그해서 한번에 여러개 할경우 키값추가
+//         if(check[0] == true){
+//             changedkey.add(check[1]);
+//         };
+//     };
+//     changedkey.delete(null); // null 값 빼기
+//     console.log(changedkey);
+//     const filteredData = hotdata.filter(row => changedkey.has(row[1])); // changedkey와 No가 맞는행만 필터링
+
+//     fetch('../api/insert/penetrationtest_manage', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(filteredData),
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok ' + response.statusText);
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log('Success:', data);
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//     });
+// };
