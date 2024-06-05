@@ -195,4 +195,17 @@ router.post('/vulner_manage_del', function(req, res, next) {
   }); 
 });
 
+router.post('/vulner_manage_insert', function(req, res, next) {
+  var sql = "INSERT INTO penetrationtest_vulner (testcount, manage_code, vulner, risklevel, memo, vulnerspot, startdate, lastdate, status, vulnermemo, vulnermanager, actdate, vulnernote) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(sql,req.body,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
+
 module.exports = router;

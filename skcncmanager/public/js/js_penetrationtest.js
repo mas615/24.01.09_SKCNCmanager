@@ -2,6 +2,8 @@ var htmiddle = [];
 for(var i = 0; i < 13 ; i++){
   htmiddle.push({className: 'htLeft htMiddle'});
 }
+htmiddle[9].width = 200;
+console.log(htmiddle[10]);
 
           // Handsontable을 초기화하고 옵션을 설정합니다.
           const container = document.getElementById('example');
