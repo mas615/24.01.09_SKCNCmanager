@@ -42,7 +42,7 @@ router.get('/', function(req, res, next) {
           if (err) {
             return res.sendStatus(403);
           };
-          if(data.username == "마준영"){
+          if(data.level >= 1){
             body += `<button id="clearFiltersButton2" onclick="location.href='./projectsedit'">수정</button> <button id="clearFiltersButton" onclick="location.href='./insert'">추가</button>`;
           }; 
         });

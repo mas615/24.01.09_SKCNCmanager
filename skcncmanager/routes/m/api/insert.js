@@ -30,8 +30,7 @@ router.post('/pentest', (req, res, next) => {
 });
 
 router.post('/pushdetails', (req, res, next) => {
-  var sql = "INSERT INTO penetrationtest (manage_code, testcount, url, urlcount, type, pentester, status, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  console.log(req.body);  
+  var sql = "INSERT INTO penetrationtest (manage_code, testcount, url, urlcount, type, pentester, status, manday, startdate, enddate, actdate, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
   db.query(sql,req.body[0],function(err, rows, fields) {
     if (err){
       res.status(500).json({ "실패": "실패" });
@@ -125,7 +124,7 @@ router.post('/penetrationtest_manage', function(req, res, next) {
   arr.shift();
   // 두 번째 요소를 맨 뒤로 보내기
   arr.push(arr.shift());
-  var sql = "UPDATE penetrationtest SET manage_code = ?, status = ?, url = ?, urlcount = ?, pentester = ?, testcount = ?, startdate = ?, enddate = ?, actdate = ?, memo = ?, manday = ?, type = ? WHERE seq = ?";
+  var sql = "UPDATE penetrationtest SET manage_code = ?, status = ?, url = ?, urlcount = ?, type = ?, pentester = ?, testcount = ?, manday = ?, memo = ?, startdate = ?, enddate = ?, actdate = ? WHERE seq = ?";
   db.query(sql,arr,function(err, rows, fields) {
     if (err){
       res.status(500).json({ err: err });
@@ -169,7 +168,6 @@ router.post('/vulner_manage', function(req, res, next) {
   arr.shift();
   // 두 번째 요소를 맨 뒤로 보내기
   arr.push(arr.shift());
-  console.log(arr);
   var sql = "UPDATE penetrationtest_vulner SET testcount = ?, manage_code = ?, vulner = ?, risklevel = ?, memo = ?, vulnerspot = ?, startdate = ?, lastdate = ?, status = ?, vulnermemo = ?, vulnermanager = ?, actdate = ?, vulnernote = ? WHERE seq = ?";
   db.query(sql,arr,function(err, rows, fields) {
     if (err){

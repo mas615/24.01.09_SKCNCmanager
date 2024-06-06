@@ -1,20 +1,28 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+//jwt 검증구간
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'SKCNCMAJUNYOUNG';
+function verifyJWT(req, res, next) {
+  const token = req.cookies.auth;
+  if (!token) {
+      return res.redirect('/');
+  }
 
-// const mysql      = require('mysql2');
-// const connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'root',
-//   database : 'skcncmanagerdb'
-// });
+  jwt.verify(token, SECRET_KEY, (err, data) => {
+      if (err) {
+          return res.redirect('/');
+      }
+      if(data.level < 1){
+        return res.redirect('/');
+      };
+      next();
+  });
+};
+router.use(verifyJWT);
+//jwt검증구간 끝
 
-// connection.connect();
-
-//connection.end();
-
-/* GET home page. */
 router.get('/', function(req, res, next) {
   var head = `
     <link href="/handsontable/handsontable.full.css" rel="stylesheet">`; 
