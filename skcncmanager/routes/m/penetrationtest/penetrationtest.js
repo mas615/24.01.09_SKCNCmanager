@@ -28,7 +28,7 @@ router.use("/penetrationtest_manage", penetrationtest_manage);
 router.use("/vulner_manage", vulner_manage);
 
 router.get('/', function(req, res, next) {
-    sql = `SELECT project_name, penetrationtest.manage_code, status, url, urlcount, type, pentester, testcount, manday, memo, DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d") FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
+    sql = `SELECT project_name, penetrationtest.manage_code, status, CONCAT(SUBSTRING(SUBSTRING_INDEX(url, '\n', 1), 1, 10), '...'), urlcount, type, pentester, testcount, manday, CONCAT(SUBSTRING(SUBSTRING_INDEX(memo, '\n', 1), 1, 10), '...'), DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d") FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
     db.query(sql, (error, rows, fields) => {
       if (error) throw error;
         const data = [];
