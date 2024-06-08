@@ -28,7 +28,7 @@ router.use("/penetrationtest_manage", penetrationtest_manage);
 router.use("/vulner_manage", vulner_manage);
 
 router.get('/', function(req, res, next) {
-    sql = `SELECT project_name, penetrationtest.manage_code, status, CONCAT(SUBSTRING(SUBSTRING_INDEX(url, '\n', 1), 1, 10), '...'), urlcount, type, pentester, testcount, manday, CONCAT(SUBSTRING(SUBSTRING_INDEX(memo, '\n', 1), 1, 10), '...'), DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d") FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
+    sql = `SELECT project_name, penetrationtest.manage_code, status, CONCAT(SUBSTRING(SUBSTRING_INDEX(url, '\n', 1), 1, 30), '...'), urlcount, type, pentester, testcount, manday, CONCAT(SUBSTRING(SUBSTRING_INDEX(memo, '\n', 1), 1, 30), '...'), DATE_FORMAT(startdate, "%y-%m-%d"), DATE_FORMAT(enddate, "%y-%m-%d"), DATE_FORMAT(actdate, "%y-%m-%d") FROM penetrationtest INNER JOIN project_table ON penetrationtest.manage_code = project_table.manage_code WHERE (penetrationtest.manage_code, testcount) IN (SELECT manage_code, MAX(testcount) AS max_testcount FROM penetrationtest GROUP BY manage_code) ORDER BY penetrationtest.manage_code`;
     db.query(sql, (error, rows, fields) => {
       if (error) throw error;
         const data = [];
@@ -45,7 +45,7 @@ router.get('/', function(req, res, next) {
         <script>const data = ${JSON.stringify(data)};</script>
         <script src="/js/js_penetrationtest.js"></script>`;
 
-        res.render('tmpgrid3', { title : "모의해킹 종합", head : null, body : body, script : script, user : req.user.name});
+        res.render('tmpgrid3', { title : "모의해킹 종합", head : null, body : body, script : script, user : req.user.username});
         //connection.end();
     });    
 });

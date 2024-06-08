@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var db = require('../../db');
 
+router.post('/testapi', function(req, res, next) {
+  console.log(req.body);
+  res.status(200).json({ success: "resresult" });
+});
+
 router.post('/project', (req, res, next) => {
     var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project, del) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
     var values = req.body;
@@ -204,6 +209,52 @@ router.post('/vulner_manage_insert', function(req, res, next) {
       res.status(200).json({ success: "resresult" });
     }
   }); 
+});
+
+router.post('/dailynew', function(req, res, next) {
+  var sql = "INSERT INTO daily_table (part, ranking, project, type, date1, date2, date3, date4, tester, status, memo1, memo2) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  let arr = req.body;
+  // 첫 번째 요소 삭제
+  arr.shift();
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  }); 
+});
+
+router.post('/dailydel', function(req, res, next) {
+  var sql = "delete from daily_table where id = ?";
+  arr = req.body[0];
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  });
+});
+
+router.post('/dailyupdate', function(req, res, next) {
+  let arr = req.body;
+  // 두 번째 요소를 맨 뒤로 보내기
+  arr.push(arr.shift());
+  var sql = "UPDATE daily_table SET part = ?, ranking = ?, project = ?, type = ?, date1 = ?, date2 = ?, date3 = ?, date4 = ?, tester = ?, status = ?, memo1 = ?, memo2 = ? WHERE id = ?";
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      res.status(500).json({ err: err });
+      console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  });
 });
 
 module.exports = router;
