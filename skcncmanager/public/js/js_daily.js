@@ -15,6 +15,10 @@ const hot = new Handsontable(container, {
     rowHeaders: true,
     colHeaders: ["seq", "구분", "순위", "프로젝트명", "진단유형", "계획시작일", "계획종료일", "실적시작일", "실적종료일", "진단자", "진행상황", "진행일정", "비고"],
     columns : htmiddle,
+    sortIndicator: true, // 정렬된 열 표시 활성화
+    columnSorting: true, // 정렬 기능 활성화
+    dropdownMenu: true, // 필터 메뉴 활성화
+    filters: true, // 필터 활성화
     hiddenColumns: {
         columns:[0]
     },
@@ -30,7 +34,8 @@ console.log(hot.getData());
 //새로 생성된 행의 기본값 설정
 hot.addHook('afterCreateRow', function(index, amount, source) {
     var defaultValue = '신규'; // 원하는 기본값 설정
-    hot.setDataAtCell(index, 0, defaultValue); // index는 새로 생성된 행의 인덱스, 2는 설정하려는 컬럼의 인덱스
+    hot.setDataAtCell(index, 0, defaultValue); // index는 새로 생성된 행의 인덱스, 0는 설정하려는 컬럼의 인덱스
+    hot.setDataAtCell(index, 1, part); // index는 새로 생성된 행의 인덱스, 2는 설정하려는 컬럼의 인덱스
 });
 
 document.getElementById('submitButton').addEventListener('click', function() {

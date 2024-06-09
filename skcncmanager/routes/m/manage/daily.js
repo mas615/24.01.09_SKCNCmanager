@@ -19,6 +19,7 @@ router.get('/', function(req, res, next) {
         body = `<button id="addButton">행추가</button> <button id="submitButton">저장</button><div id="data"></div>`;
         script = `<script src="/handsontable/handsontable.full.js"></script>
         <script>const data = ${JSON.stringify(data)};</script>
+        <script>const part = null;</script>
         <script src="/js/js_daily.js"></script>`;
         res.render('tmpgrid3', { title : "데일리 종합", head : null, body : body, script : script, user : req.user.username});
     });
