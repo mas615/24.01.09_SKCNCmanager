@@ -28,7 +28,6 @@ const hot = new Handsontable(container, {
 var addButton = document.getElementById('addButton');
 addButton.addEventListener('click', function() {
 hot.alter('insert_row');
-console.log(hot.getData());
 });
 
 //새로 생성된 행의 기본값 설정
@@ -41,7 +40,7 @@ hot.addHook('afterCreateRow', function(index, amount, source) {
 document.getElementById('submitButton').addEventListener('click', function() {
     const sdata = hot.getData();
 
-    const fetchRequests = data.map(row => {
+    const fetchRequests = sdata.map(row => {
     const isNew = row[0] === "신규";
     const allOtherValuesNull = row.slice(1).every(value => value === null);
     const allValuesNullExcludingFirstTwo = row.slice(2).every(value => value === null);
