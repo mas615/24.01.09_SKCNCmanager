@@ -7,6 +7,7 @@ router.post('/testapi', function(req, res, next) {
   res.status(200).json({ success: "resresult" });
 });
 
+//프로젝트 관련
 router.post('/project', (req, res, next) => {
     var sql = "INSERT INTO project_table (project_code, service_code, manage_code, project_name, new_inspectiontype, old_inspectiontype, open_date, relative_comp, comp1, part1, manager1, manager1_phone, comp2, part2, manager2, manager2_phone, pentest, source_code, infra, note, check1, check2, check3, check4, check5, check6, check7, old_manage_code, old_project, del) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
     var values = req.body;
@@ -18,6 +19,18 @@ router.post('/project', (req, res, next) => {
         res.status(200).json({ success: "resresult" });
       }
     }); 
+});
+
+router.post('/project_del', function(req, res, next) {
+  var sql = "delete from project_table where seq = ?";
+  db.query(sql,[req.body[0]],function(err, rows, fields) {
+    if (err){
+      res.status(404).json({ error: req.body[0] });
+    }
+    else{
+      res.status(200).json({ success: req.body[0] });
+    }
+  }); 
 });
 
 router.post('/pentest', (req, res, next) => {
@@ -256,5 +269,6 @@ router.post('/dailyupdate', function(req, res, next) {
     }
   });
 });
+
 
 module.exports = router;
