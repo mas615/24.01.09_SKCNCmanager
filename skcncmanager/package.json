@@ -12,7 +12,9 @@
     "express": "~4.16.1",
     "handsontable": "^14.1.0",
     "http-errors": "~1.6.3",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
-    "mysql2": "^3.7.0"
+    "mysql2": "^3.7.0",
+    "tui-grid": "^4.21.22"
   }
 }
