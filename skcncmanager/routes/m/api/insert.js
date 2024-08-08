@@ -2,6 +2,17 @@ var express = require('express');
 var router = express.Router();
 var db = require('../../db');
 
+function encpassword(pass){  
+  const crypto = require('crypto');
+  pass = crypto.createHash('sha256')
+                    .update(pass)
+                    .digest('hex');
+  pass = crypto.createHash('sha256')
+                    .update(pass+"MAJUNYOUNG")
+                    .digest('hex');
+  return pass
+}
+
 router.post('/testapi', function(req, res, next) {
   console.log(req.body);
   res.status(200).json({ success: "resresult" });
@@ -263,6 +274,23 @@ router.post('/dailyupdate', function(req, res, next) {
     if (err){
       res.status(500).json({ err: err });
       console.log(err)
+    }
+    else{
+      res.status(200).json({ success: "resresult" });
+    }
+  });
+});
+
+//admin관련
+router.post('/makeuser', function(req, res, next) {
+  let arr = req.body;
+  arr[2] = encpassword(arr[2])
+  console.log(arr)
+  sql =  `INSERT INTO user (id, pw, name, level) VALUES (?, ?, ?, ?)`
+  db.query(sql,arr,function(err, rows, fields) {
+    if (err){
+      console.log(err)
+      res.status(500).json({ err: err });      
     }
     else{
       res.status(200).json({ success: "resresult" });

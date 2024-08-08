@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
+
 const m = require('./m/m');
+const admin = require('./admin/admin');
 var db = require('./db');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'SKCNCMAJUNYOUNG';
@@ -111,5 +113,6 @@ router.post('/ip_name', (req, res, next) => { // 퍼미션 문제로 router.use(
 
 router.use(verifyJWT);
 router.use("/m",m);
+router.use("/admin",admin);
 
 module.exports = router;
