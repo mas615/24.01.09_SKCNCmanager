@@ -285,12 +285,12 @@ router.post('/dailyupdate', function(req, res, next) {
 router.post('/makeuser', function(req, res, next) {
   let arr = req.body;
   arr[2] = encpassword(arr[2])
-  console.log(arr)
   sql =  `INSERT INTO user (id, pw, name, level) VALUES (?, ?, ?, ?)`
   db.query(sql,arr,function(err, rows, fields) {
     if (err){
-      console.log(err)
-      res.status(500).json({ err: err });      
+      console.log(err.message)
+      console.log(err.sqlMessage)
+      res.status(500).json({ errno: err.errno, message: err.message, sqlMessage: err.sqlMessage });      
     }
     else{
       res.status(200).json({ success: "resresult" });
