@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
       <script>const gridData = ${JSON.stringify(rows)}</script>
       <script src="/tui/tui-grid.js"></script>
       <script src="/js/tui/js_test.js"></script>`
-    res.render('tmpgrid3', { title : "모의해킹 종합", head : "null", body : body, script : script, user : req.user.username});
+    res.render('view', { title : "모의해킹 종합", head : "null", body : body, script : script, user : req.user});
   });
   
 });

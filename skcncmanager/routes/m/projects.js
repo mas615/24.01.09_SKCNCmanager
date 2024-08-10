@@ -78,7 +78,7 @@ router.get('/', function(req, res, next) {
 
       </script>
       `;
-      res.render('tmpgrid3', { title : "Project", head : head, body : body, script : script, user : req.user.username});
+      res.render('view', { title : "프로젝트", head : "null", body : body, script : script, user : req.user});
   });    
 });
 

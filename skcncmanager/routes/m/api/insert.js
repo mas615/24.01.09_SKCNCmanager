@@ -284,7 +284,7 @@ router.post('/dailyupdate', function(req, res, next) {
 //admin관련
 router.post('/makeuser', function(req, res, next) {
   let arr = req.body;
-  arr[2] = encpassword(arr[2])
+  arr[1] = encpassword(arr[1])
   sql =  `INSERT INTO user (id, pw, name, level) VALUES (?, ?, ?, ?)`
   db.query(sql,arr,function(err, rows, fields) {
     if (err){
@@ -296,6 +296,12 @@ router.post('/makeuser', function(req, res, next) {
       res.status(200).json({ success: "resresult" });
     }
   });
+});
+
+//setting
+router.post('/mypassword', function(req, res, next) {
+  console.log(req.body);
+  res.status(200).json({ success: "resresult" });
 });
 
 
