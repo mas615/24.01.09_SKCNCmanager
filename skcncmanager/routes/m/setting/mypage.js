@@ -33,7 +33,7 @@ router.get('/', function(req, res, next) {
                 신규패스워드 한번 더 입력: <input type="password" name="newpw2"><br>
                 <button type="button" onclick="collectFormData()">계정 생성</button>
             </form>`
-    script = `<script src='/js/js_mypage.js'>`
+    script = `<script src='/js/js_mypage.js'></script>`
     res.render('view', { title : "setting", head : head, body : body, script : script, user : req.user});
 });
 

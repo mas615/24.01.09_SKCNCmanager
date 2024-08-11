@@ -1,43 +1,13 @@
 var express = require('express');
 var router = express.Router();
-
+const modules = require('./module/modules')
 const m = require('./m/m');
 const admin = require('./admin/admin');
 var db = require('./db');
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'SKCNCMAJUNYOUNG';
-
-function verifyJWT(req, res, next) {
-  const token = req.cookies.auth;
-
-  if (!token) {
-      return res.redirect('/');
-  }
-
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
-      if (err) {
-          return res.redirect('/');
-      }
-
-      req.user = decoded;
-      next();
-  });
-};
-
-function encpassword(pass){  
-  const crypto = require('crypto');
-  pass = crypto.createHash('sha256')
-                    .update(pass)
-                    .digest('hex');
-  pass = crypto.createHash('sha256')
-                    .update(pass+"MAJUNYOUNG")
-                    .digest('hex');
-  return pass
-}
 
 router.get('/', function(req, res, next) {
   const token1 = req.cookies.auth;
-  jwt.verify(token1, SECRET_KEY, (err, decoded) => {
+  modules.verify(token1, (err, decoded) => {
     if (err) {
       body = `<form action="/login" method="post">
             <input type="text" name="id" placeholder="아이디" required>
@@ -68,7 +38,7 @@ router.post('/ip_name', (req, res, next) => { // 퍼미션 문제로 router.use(
 
 router.post('/login', (req, res, next) => { // 퍼미션 문제로 router.use(verifyJWT); 이전에 놓기위해 api에 넣지않고 여기에 넣음.
   let previousUrl = req.get('referer');
-  let value = [req.body.id, encpassword(req.body.pw)]
+  let value = [req.body.id, modules.encpassword(req.body.pw)]
   console.log(value)
   let sql = "select id, name, level from user where id=? and pw=?"
   db.query(sql, value, (err, rows) => {
@@ -78,7 +48,7 @@ router.post('/login', (req, res, next) => { // 퍼미션 문제로 router.use(ve
     } else {
       console.log('리스트에 요소가 있습니다.');
       const user = rows[0];
-      const token = jwt.sign(user, SECRET_KEY, { expiresIn: '24h' });
+      const token = modules.sign(user, { expiresIn: '24h' });
       res.cookie('auth', token, {
         maxAge: 1000 * 60 * 60 * 24, // 1일 (밀리초 단위)
         httpOnly: true,
@@ -96,7 +66,7 @@ router.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-router.use(verifyJWT);
+router.use(modules.verifyJWT);
 router.use("/m",m);
 router.use("/admin",admin);
 

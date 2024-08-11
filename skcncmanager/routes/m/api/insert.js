@@ -1,17 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../../db');
-
-function encpassword(pass){  
-  const crypto = require('crypto');
-  pass = crypto.createHash('sha256')
-                    .update(pass)
-                    .digest('hex');
-  pass = crypto.createHash('sha256')
-                    .update(pass+"MAJUNYOUNG")
-                    .digest('hex');
-  return pass
-}
+var modules = require('../../module/modules');
 
 router.post('/testapi', function(req, res, next) {
   console.log(req.body);
@@ -284,7 +274,7 @@ router.post('/dailyupdate', function(req, res, next) {
 //admin관련
 router.post('/makeuser', function(req, res, next) {
   let arr = req.body;
-  arr[1] = encpassword(arr[1])
+  arr[1] = modules.encpassword(arr[1])
   sql =  `INSERT INTO user (id, pw, name, level) VALUES (?, ?, ?, ?)`
   db.query(sql,arr,function(err, rows, fields) {
     if (err){
@@ -300,8 +290,34 @@ router.post('/makeuser', function(req, res, next) {
 
 //setting
 router.post('/mypassword', function(req, res, next) {
-  console.log(req.body);
-  res.status(200).json({ success: "resresult" });
+  console.log(req.user.id);
+  if(req.body[1] != req.body[2]){
+    res.status(500).json({ errno: 9999, message: "신규 패스워드를 다시 입력해주세요.", sqlMessage: '입력 에러.' }); 
+  }else if(req.body[0] == req.body[2]){
+    res.status(500).json({ errno: 9999, message: "기존 패스워드와 신규 패스워드가 같습니다.", sqlMessage: '입력 에러.' }); 
+  }else{
+    db.query('select * from user where id=?', [req.user.id], (err, rows)=>{
+      console.log(rows)
+      if (err){
+        res.status(500).json({ errno: err.errno, message: err.message, sqlMessage: err.sqlMessage });      
+      }
+      else{
+        if(rows[0].pw != modules.encpassword(req.body[0])){
+          console.log(rows.pw,modules.encpassword(req.body[0]))
+          res.status(500).json({ errno: 9999, message: "기존 패스워드를 확인해주세요.", sqlMessage: '입력 에러.' });
+        }else{
+          db.query('update user set pw=?, lastlogin=NOW() where id=?',[modules.encpassword(req.body[1]), req.user.id], ()=>{
+            if (err){
+              res.status(500).json({ errno: err.errno, message: err.message, sqlMessage: err.sqlMessage });      
+            }
+            else{
+              res.status(200).json({ success: "resresult" });
+            };
+          })
+        };
+      };
+    })
+  }
 });
 
 

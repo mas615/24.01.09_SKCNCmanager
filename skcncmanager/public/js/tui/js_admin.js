@@ -5,11 +5,11 @@ const grid = new tui.Grid({
     scrollY: false,
     columns: [
         { header: 'Seq', name: 'seq', width: 'auto' },
-        { header: '아이디', name: 'id', width: 'auto', editor: 'text' },
-        { header: '비번', name: 'pw', width: 'auto', editor: 'text' },
+        { header: 'ID', name: 'id', width: 'auto', editor: 'text' },
+        { header: 'PW(hash+hash,salt)', name: 'pw', width: 'auto', editor: 'text' },
         { header: '이름', name: 'name', width: 'auto', editor: 'text' },
-        { header: '레벨', name: 'level', width: 'auto', editor: 'text'},
-        { header: '마지막로그인', name: 'lastlogin', width: 'auto', editor: 'text' },
+        { header: '권한', name: 'level', width: 'auto', editor: 'text'},
+        { header: '마지막패스워드변경', name: 'lastlogin', width: 'auto', editor: 'text' },
         { header: '생성일', name: 'created_at', width: 'auto', editor: 'text' },
       ]
     });

@@ -1,29 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+var modules = require('../module/modules');
 
-function verifyJWT(req, res, next) {
-    const token = req.cookies.auth;
-  
-    if (!token) {
-        return res.redirect('/');
-    }
-  
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        if(decoded.level<9){
-            return res.redirect('/');
-        }
-  
-        req.user = decoded;
-        next();
-    });
-};
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'SKCNCMAJUNYOUNG';
-router.use(verifyJWT);
+router.use(modules.verifyJWTlevel(9));
 
 router.get('/', function(req, res, next) {
     sql = `select * from user`
