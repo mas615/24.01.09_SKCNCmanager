@@ -1,0 +1,43 @@
+# 기본 설정
+Include /etc/ssh/sshd_config.d/*.conf
+
+# SSH 포트 설정 (기본 22)
+Port 22
+AddressFamily any
+ListenAddress 0.0.0.0
+ListenAddress ::
+
+# HostKey 설정 (주석 해제하여 활성화 가능)
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# 인증 관련 설정
+PermitRootLogin yes  # 루트 계정 로그인 허용 (필요 시 no로 변경)
+PasswordAuthentication yes  # 비밀번호 인증 허용
+PubkeyAuthentication yes  # SSH 키 인증 허용
+
+# PAM (Pluggable Authentication Module) 사용
+UsePAM yes
+
+# TCP 포워딩 및 X11 포워딩 설정
+AllowTcpForwarding yes
+X11Forwarding yes
+
+# 접속 유지 및 로그인 메시지 관련 설정
+PrintMotd no
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 3
+
+# 보안 관련 설정
+PermitEmptyPasswords no
+MaxAuthTries 6
+MaxSessions 10
+StrictModes yes
+
+# 방화벽을 통해 SSH 트래픽 허용
+AcceptEnv LANG LC_*
+
+# SFTP 서브시스템 설정
+Subsystem sftp /usr/lib/openssh/sftp-server
